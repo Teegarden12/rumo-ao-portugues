@@ -493,7 +493,17 @@ const DIALOGUES = [
 /* Practice tools: audio, speaking checks, flashcards, listening quiz, conversations.
    Uses globals from index.html (state, save, GOALS, plan helpers) at call time. */
 
-/* ---------- Audio (browser text-to-speech) ---------- */
+/* ---------- Audio: recorded human-sounding voices, with browser text-to-speech as a fallback ---------- */
+// Clips were recorded with ElevenLabs voices and live at audio/<voice>/<id>.mp3, where id is a hash of the phrase.
+const RECORDED = [['yara', 'Yara'], ['livia', 'Livia'], ['marisol', 'Marisol'], ['ines', 'Ines']];
+// phrases with a recording, and phrases a voice could not be cut cleanly for (those play in Yara's voice)
+const CLIP_IDS = new Set(["dtnksb","lxu5e9","1h8tiss","ywc695","10ime9r","49fz9y","zlj78m","ticoml","1cj6so8","2ph7w0","sbmd0y","vlcfcg","wbafai","k07wjz","1lbunaj","1pddw9g","tz86ys","1ypqcca","jmlwyl","15l1qpr","1t8uai0","115hxnc","zmljp9","klbprh","1as463f","1nt81sv","4gnppz","1v0tcym","1ghe02g","1evam2v","14kba5j","1p7vim0","lfu0of","1q2ezss","s9z9fm","1pmq45e","eez8u7","1kyplt5","1yds4sv","1kjc81b","1rrjo8w","1dx7pb9","1dnrwvg","1opl1du","16ildj4","1iu1bp8","s41mzs","1qos5ox","ivpu6o","1tibdrf","qhlqm6","4p2ldd","qujhks","ih5li4","5aogk8","q46299","1navwxu","k9tbaq","klirwg","sc583b","1kyiv5d","7btyal","1pspet0","15k7oza","18d8l4p","iy3mja","1k3412x","94j27h","93xxlv","19gkebe","1mjixe6","fgjd4a","oeb0lu","4f44nk","1ivmx3o","q3nvlz","cfo85a","1albfe8","q47uvl","60xkhs","k8zu73","1o48g0q","1uncq7f","85ncmw","mn3drp","1k46zq4","1gd9b6y","1lyumxx","jxh6sw","h7vxix","1ur9aw0","edj3cn","4ty1i7","83b77o","1wfohfq","pbbngg","mpxfoz","v1lii5","1baag3v","37r75n","1podcag","1pahsgb","zqm389","1djol0v","s1e2j8","9gfnwa","1w005bt","1p2625p","cfcugc","z6i5e3","1dq1wo","1gt058y","egsr23","dgaj7p","2p7788","1o9x91c","1p01joy","wkhl2e","1tx0v29","6d9yau","h6zcvd","1pgux6w","1wkvegs","wvzxze","o6gini","rcfafi","1i7co97","1qfq7x7","r36hi7","1gxa7p0","uvg0vq","1mogd8m","1k59qku","a2g14z","5cpgna","y2lbf7","15xgk85","1uwatoz","seha3b","mkak00","1yfyb8m","1o6lsr3","1vw1kln","1v2kq0n","g168br","b14nos","dwlt42","1rcm07m","1rd5i9a","1duxad0","vjdezj","13ami59","13esoaf","v7wzlx","10p8wv3","863rb3","mtyzu1","c8wifq","g4rfe5","13xxapw","g0urzc","ntyrb","1529sdy","46hnpf","1mxx3j8","m0ykga","bk91su","165hven","6ft0mn","vxrm8b","j6mx60","vzyj3j","u6c2b","5fd6uj","1j2m0ls","9c5ofo","1prr7nv","1ealns9","amhukp","4ydzkr","dc0crk","1j75j7c","5fxcvo","16wjcdn","gmnc1g","7a1hq3","msnz7l","wzscbd","w0pdpi","u5vksj","1swzfaq","1m34l68","3x8gvv","18612l8","w53e56","1ujwxgs","eso3e9","1hgtxjx","1r4gyg6","2ucrpj","cnjbpg","14l1ky6","1u0cna3","62uzlu","14aycaq","1smtlgj","ki2z0h","3owj69","c75y7s","19xeqyj","2qjp4f","1uhkx6q","6y0o2j","dp7us5","17ur8h9","1y6c0ui","wxv7wp","77do1r","1rhjjow","7x5adt","qcq3ry","h7fueu","umvg41","1u4y9qv","1ah9ivi","k0fo5t","199qt2n","7e10ce","ifnrv4","198gcsa","1hkwjdb","fcw21","dpbgjl","1mfax16","14epf8t","1mddf56","160lnhg","ls7t27","i9wl7h","17plv1a","nx4ulj","kakziu","hhwapf","99bsm3","1orp0su","1j71c3o","uug18z","1ycuvx","1afq811","sgsh9h","11y4zbf","cdyzrd","xz7f17","d0axry","192ai5j","1aqcz0o","x3qi5u","cf79yq","1h19mid","mt5jr1","16i561p","6l47f1","153b8dv","h76eus","q9oz77","11pfowl","nufsjk","y8vuru","nhl1d3","1meqeah","4gcyur","b1q7of","1n5nl1l","1sbhawx","1k3dt0m","1e7ygql","ytpxw","1ykekh2","i2igb0","ae8eg1","k5rbwl","1nis6z","rwy5dv","1fpg2y2","1u8zh3o","1s737en","1r9a2vx","ndlvbd","10k16m0","1bmrzqq","3lc5v5","tdzw4y","wfqq4r","8do1dq","7tcsg8","68p71l","a7qhm9","18shim5","198wt7e","1g90zsk","1d5olrh","14zhscc","ectph9","14ou9tm","1yzrep4"]);
+const REC_MISSING = {"ines":["1podcag","1pahsgb","zqm389","1djol0v","s1e2j8","9gfnwa","1w005bt","1p2625p","cfcugc","z6i5e3","1dq1wo","1gt058y","egsr23","dgaj7p","2p7788","1o9x91c","1p01joy","wkhl2e","1tx0v29","6d9yau"],"marisol":["cnjbpg","14l1ky6","1u0cna3","62uzlu","14aycaq","1smtlgj","ki2z0h","3owj69","c75y7s","19xeqyj","2qjp4f","1uhkx6q","6y0o2j","dp7us5","17ur8h9","1y6c0ui","wxv7wp","77do1r","1rhjjow","7x5adt"]};
+// must match the recording script: same cleanup and hash
+const clipText = t => t.replace(/ ?…/g, '...').replace(/\.? \/ /g, ', ').replace(/\s+/g, ' ').trim();
+const clipId = s => { let h = 0x811c9dc5; for (const ch of s) { h ^= ch.codePointAt(0); h = Math.imul(h, 0x01000193) >>> 0; } return h.toString(36); };
+// Recorded clips sound natural at full speed, so their speeds sit higher than the robot voice's
+const REC_SPEEDS = {slower: 0.75, normal: 0.9, native: 1};
 // Prefer natural-sounding female Brazilian voices (Edge's "Natural" voices sound close to a real person).
 const FEMALE_VOICE = /francisca|thalita|leticia|letícia|yara|brenda|elza|giovanna|leila|manuela|luciana|vit[oó]ria|camila|maria|google portugu[eê]s do brasil/i;
 const MALE_VOICE = /ant[oô]nio|daniel|donato|f[aá]bio|humberto|j[uú]lio|nicolau|val[eé]rio|felipe|macerio/i;
@@ -504,8 +514,11 @@ function getSpeed(){ try { return localStorage.getItem(SPEED_KEY) || 'normal'; }
 function setSpeed(k){ try { localStorage.setItem(SPEED_KEY, k); } catch(e){} }
 const Speech = {
   voice: null,
-  ok: 'speechSynthesis' in window,
-  all(){ return this.ok ? speechSynthesis.getVoices().filter(v => /^pt/i.test(v.lang)) : []; },
+  rec: null,                      // recorded voice key, or null to use the device voice
+  ok: true,
+  tts: 'speechSynthesis' in window,
+  player: new Audio(),            // one reused element, so iPhones allow follow-up plays
+  all(){ return this.tts ? speechSynthesis.getVoices().filter(v => /^pt/i.test(v.lang)) : []; },
   rank(v){
     let s = 0;
     if (/^pt[-_]BR$/i.test(v.lang)) s += 100;
@@ -518,29 +531,61 @@ const Speech = {
   pick(){
     const vs = this.all();
     let saved = null; try { saved = localStorage.getItem(VOICE_KEY); } catch(e){}
+    if (!saved) saved = 'rec:yara';
+    this.rec = saved.startsWith('rec:') && RECORDED.some(r => r[0] === saved.slice(4)) ? saved.slice(4) : null;
     this.voice = vs.find(v => v.name === saved) || vs.slice().sort((a, b) => this.rank(b) - this.rank(a))[0] || null;
   },
-  choose(name){ this.voice = this.all().find(v => v.name === name) || this.voice; try { localStorage.setItem(VOICE_KEY, name); } catch(e){} },
-  isBrazilian(){ return !!this.voice && /BR$/i.test(this.voice.lang); },
+  choose(value){
+    try { localStorage.setItem(VOICE_KEY, value); } catch(e){}
+    if (value.startsWith('rec:')) this.rec = value.slice(4);
+    else { this.rec = null; this.voice = this.all().find(v => v.name === value) || this.voice; }
+  },
+  isBrazilian(){ return !!this.rec || (!!this.voice && /BR$/i.test(this.voice.lang)); },
   isNatural(){ return !!this.voice && /natural|neural|online|enhanced|premium|aprimorad/i.test(this.voice.name + ' ' + this.voice.voiceURI); },
-  get base(){ return (SPEEDS.find(s => s[0] === getSpeed()) || SPEEDS[1])[2]; },
-  get slow(){ return Math.max(0.4, this.base * 0.65); },
+  get ttsBase(){ return (SPEEDS.find(s => s[0] === getSpeed()) || SPEEDS[1])[2]; },
+  get base(){ return this.rec ? (REC_SPEEDS[getSpeed()] || REC_SPEEDS.normal) : this.ttsBase; },
+  get slow(){ return this.rec ? Math.max(0.6, this.base * 0.7) : Math.max(0.4, this.base * 0.65); },
   // slow first so you can hear each sound, then once more at your normal speed
   sayLearn(text){ this.say(text, this.slow, () => setTimeout(() => this.say(text), 500)); },
+  stop(){ try { this.player.pause(); } catch(e){} if (this.tts) speechSynthesis.cancel(); },
+  clipUrl(text, voice = this.rec){
+    const id = clipId(clipText(text));
+    if (!voice || !CLIP_IDS.has(id)) return null;
+    return `audio/${(REC_MISSING[voice] || []).includes(id) ? 'yara' : voice}/${id}.mp3`;
+  },
   say(text, rate, onend){
-    if (!this.ok) return;
+    this.stop();
+    const url = this.clipUrl(text);
+    if (url){
+      const p = this.player, r = rate ?? this.base;
+      let fellBack = false;
+      // clip missing or offline and not saved yet: use the device voice at its own speed scale
+      const fallback = () => { if (fellBack) return; fellBack = true; this.speakTTS(text, rate !== undefined && rate < this.base ? Math.max(0.4, this.ttsBase * 0.65) : undefined, onend); };
+      p.onended = onend || null; p.onerror = fallback;
+      p.src = url;
+      p.preservesPitch = p.webkitPreservesPitch = true;
+      p.defaultPlaybackRate = p.playbackRate = r;
+      p.play().then(() => { p.playbackRate = r; }).catch(fallback);
+      return;
+    }
+    this.speakTTS(text, rate, onend);
+  },
+  speakTTS(text, rate, onend){
+    if (!this.tts) return;
     speechSynthesis.cancel();
     const u = new SpeechSynthesisUtterance(text.replace(/…/g, '').replace(/ \/ /g, '. '));
     u.lang = 'pt-BR'; if (this.voice) u.voice = this.voice;
-    u.rate = rate ?? this.base;
+    u.rate = rate ?? this.ttsBase;
     if (onend) u.onend = onend;
     speechSynthesis.speak(u);
   }
 };
-if (Speech.ok){
-  Speech.pick();
+Speech.pick();
+if (Speech.tts){
   speechSynthesis.addEventListener('voiceschanged', () => { const had = !!Speech.voice; Speech.pick(); if (!had && Speech.voice && typeof render === 'function' && state?.plan && tab === 'practice') render(); });
 }
+// any element with data-say-text plays that phrase (used by the phrase of the day)
+document.addEventListener('click', e => { const b = e.target.closest('[data-say-text]'); if (b) Speech.say(decodeURIComponent(b.dataset.sayText)); });
 const voiceLabel = v => v.name.replace(/^Microsoft\s+/, '').replace(/\s+Online/, '').replace(/\s*-\s*Portuguese.*$/, '').replace(/\s*\(Natural\)/, ' (natural)');
 
 /* ---------- Speaking check (browser speech recognition) ---------- */
@@ -654,7 +699,7 @@ function openSheet(html){
 }
 function closeSheet(){
   const s = document.getElementById('sheet'); if (!s) return;
-  if (Speech.ok) speechSynthesis.cancel();
+  Speech.stop();
   s.hidden = true; document.body.style.overflow = '';
   const y = window.scrollY; render(); window.scrollTo(0, y);
 }
@@ -679,20 +724,22 @@ document.addEventListener('click', e => {
   const b = e.target.closest('[data-speed]'); if (!b) return;
   setSpeed(b.dataset.speed);
   document.querySelectorAll('[data-speed]').forEach(x => x.setAttribute('aria-pressed', x.dataset.speed === b.dataset.speed));
-  Speech.say('Obrigado');
+  Speech.say('Obrigado!');
 });
 function voiceNote(withSpeed = true){
   if (!Speech.ok) return `<p class="note">Your browser can't play audio. Use Chrome or Edge.</p>`;
   if (withSpeed) return voiceNote(false) + speedBarHTML();
+  if (Speech.rec) return '';
   if (Speech.voice && !Speech.isBrazilian()) return `<p class="note">No Brazilian voice found, so audio uses a European Portuguese voice. For a Brazilian one, use Chrome or Edge, or add "Portuguese (Brazil)" in Windows Settings → Time & language → Speech.</p>`;
   if (!Speech.voice) return `<p class="note">No Portuguese voice found yet. If there's no audio, use Chrome or Edge, or add "Portuguese (Brazil)" in Windows Settings → Time & language → Speech.</p>`;
   return '';
 }
 function voiceCardHTML(){
-  if (!Speech.ok) return '';
   const vs = Speech.all().slice().sort((a, b) => Speech.rank(b) - Speech.rank(a));
-  const cur = Speech.voice;
-  const tip = cur && Speech.isNatural() && FEMALE_VOICE.test(cur.name)
+  const cur = Speech.voice, rec = Speech.rec;
+  const tip = rec
+    ? `You're using <b>${RECORDED.find(r => r[0] === rec)[1]}</b>, a recorded natural voice. Tap <b>Save for offline</b> once so she works without internet.`
+    : cur && Speech.isNatural() && FEMALE_VOICE.test(cur.name)
     ? `You're using <b>${voiceLabel(cur)}</b>, a natural-sounding Brazilian voice.`
     : /iPhone|iPad|iPod/.test(navigator.userAgent)
       ? `For a more real-sounding female voice, on your iPhone open <b>Settings → Accessibility → Spoken Content → Voices → Portuguese (Brazil)</b>, download <b>Luciana (Enhanced)</b> or <b>(Premium)</b>, then reopen this app and pick it here.`
@@ -701,9 +748,13 @@ function voiceCardHTML(){
       : `For the most real-sounding female voice, open this app in <b>Microsoft Edge</b> and pick <b>Francisca (natural)</b> or <b>Thalita (natural)</b>.`;
   return `<div class="card"><div class="eyebrow">Voice</div>
     <p class="muted small" style="margin-top:6px">${tip}</p>
-    ${vs.length ? `<div class="voice-row"><select id="voice-sel" aria-label="Voice">${vs.map(v => `<option value="${v.name}" ${cur && v.name === cur.name ? 'selected' : ''}>${voiceLabel(v)} · ${/BR$/i.test(v.lang) ? 'Brazil' : 'Portugal'}</option>`).join('')}</select>
-      <button class="ic" id="voice-test">▶ Test</button></div>` : ''}
+    <div class="voice-row"><select id="voice-sel" aria-label="Voice">
+      <optgroup label="Recorded voices (most natural)">${RECORDED.map(([k, label]) => `<option value="rec:${k}" ${rec === k ? 'selected' : ''}>${label} · recorded</option>`).join('')}</optgroup>
+      ${vs.length ? `<optgroup label="Phone voices (robotic)">${vs.map(v => `<option value="${v.name}" ${!rec && cur && v.name === cur.name ? 'selected' : ''}>${voiceLabel(v)} · ${/BR$/i.test(v.lang) ? 'Brazil' : 'Portugal'}</option>`).join('')}</optgroup>` : ''}
+    </select>
+      <button class="ic" id="voice-test">▶ Test</button></div>
     ${speedBarHTML()}
+    ${rec ? `<div class="sheet-actions"><button class="btn small ghost" id="voice-save">Save ${RECORDED.find(r => r[0] === rec)[1]} for offline</button><span class="small muted" id="voice-save-msg"></span></div>` : ''}
   </div>`;
 }
 function openSettings(){
@@ -715,8 +766,23 @@ function openSettings(){
 document.addEventListener('click', e => { if (e.target.closest('[data-settings]')) openSettings(); });
 function bindVoiceCard(root){
   const sel = root.querySelector('#voice-sel');
-  sel?.addEventListener('change', () => { Speech.choose(sel.value); Speech.say('Oi! Tudo bem? Eu vou te ajudar a aprender português.'); render(); });
+  sel?.addEventListener('change', () => {
+    Speech.choose(sel.value); Speech.say('Oi! Tudo bem? Eu vou te ajudar a aprender português.');
+    if (root.closest('#sheet')) openSettings(); else render();
+  });
   root.querySelector('#voice-test')?.addEventListener('click', () => Speech.say('Oi! Tudo bem? Eu vou te ajudar a aprender português.'));
+  root.querySelector('#voice-save')?.addEventListener('click', async e => {
+    const btn = e.target, msg = root.querySelector('#voice-save-msg'), v = Speech.rec;
+    if (!('serviceWorker' in navigator) || location.protocol !== 'https:'){ msg.textContent = 'Saving works in the installed app.'; return; }
+    // fetching each clip once lets the service worker keep it for offline use
+    const urls = [...new Set([...CLIP_IDS].map(id => `audio/${(REC_MISSING[v] || []).includes(id) ? 'yara' : v}/${id}.mp3`))];
+    btn.disabled = true; let done = 0, failed = 0;
+    const queue = urls.slice();
+    const worker = async () => { while (queue.length){ const u = queue.shift(); try { const r = await fetch(u); if (!r.ok) failed++; } catch(err){ failed++; } done++; msg.textContent = `Saving… ${done} / ${urls.length}`; } };
+    await Promise.all(Array.from({length: 6}, worker));
+    msg.textContent = failed ? `Saved ${done - failed} of ${urls.length}. Tap again with internet to finish.` : 'Saved ✓ Works offline now.';
+    btn.disabled = false;
+  });
 }
 
 /* ---------- Lesson ---------- */
@@ -1353,7 +1419,7 @@ function renderPlan(){
       <button class="btn small" id="respread">Re-spread</button></div>` : ''}
 
     <div class="card phrase"><div class="eyebrow">Phrase of the day</div>
-      <div class="pt" lang="pt-BR">${phrase[0]}</div><div class="muted">${phrase[1]}</div></div>
+      <div class="ph-main"><div class="pt" lang="pt-BR">${phrase[0]}</div><button class="ic" data-say-text="${encodeURIComponent(phrase[0])}" aria-label="Play">▶</button></div><div class="muted">${phrase[1]}</div></div>
 
     ${todayCard}
 
@@ -1372,7 +1438,7 @@ function renderPlan(){
       <button class="btn ghost small" id="extend2">Extend by 7 days</button>
       <button class="btn ghost small" id="reset">Start a new plan</button>
     </div>`}
-    <p class="muted small" style="margin-top:24px;text-align:center">App version 5</p>`;
+    <p class="muted small" style="margin-top:24px;text-align:center">App version 6</p>`;
 
   const app = $('#app');
   bindPractice(app);

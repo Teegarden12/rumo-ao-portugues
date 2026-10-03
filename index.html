@@ -132,7 +132,11 @@ details.week[open]>summary::after{content:"–"}
 @media (min-width:700px){.sheet{align-items:center}.sheet-in{border-radius:20px;padding:28px}}
 .sheet-x{position:absolute;top:10px;right:10px;width:40px;height:40px;border:0;border-radius:99px;background:var(--bg);color:var(--ink);font-size:24px;cursor:pointer}
 .sheet-in h2{margin:4px 40px 8px 0}
-.voice-row{display:flex;gap:8px;margin-top:10px}.voice-row select{flex:1}
+.voice-row{display:flex;gap:8px;margin-top:10px}
+.speed{display:flex;align-items:center;gap:6px;margin:12px 0 0;font-size:14px;color:var(--muted)}
+.speed span{margin-right:2px}
+.speed button{border:1px solid var(--line);background:var(--bg);color:var(--ink);border-radius:99px;padding:6px 12px;font:600 13px Figtree,sans-serif;cursor:pointer}
+.speed button[aria-pressed="true"]{background:var(--green);border-color:var(--green);color:#fff}.voice-row select{flex:1}
 .tipbox{background:var(--green-soft);border-radius:12px;padding:12px 14px;margin:12px 0;font-size:15px}
 .phrases{list-style:none;padding:0;margin:8px 0;display:grid;gap:6px}
 .phrases li{border:1px solid var(--line);border-radius:12px;padding:10px 12px}
@@ -492,7 +496,11 @@ const DIALOGUES = [
 // Prefer natural-sounding female Brazilian voices (Edge's "Natural" voices sound close to a real person).
 const FEMALE_VOICE = /francisca|thalita|leticia|letícia|yara|brenda|elza|giovanna|leila|manuela|luciana|vit[oó]ria|camila|maria|google portugu[eê]s do brasil/i;
 const MALE_VOICE = /ant[oô]nio|daniel|donato|f[aá]bio|humberto|j[uú]lio|nicolau|val[eé]rio|felipe|macerio/i;
-const VOICE_KEY = 'ptplanner.voice';
+const VOICE_KEY = 'ptplanner.voice', SPEED_KEY = 'ptplanner.speed';
+// Speaking speeds for learners. Browser speech at 1.0 is native speed, too fast to copy sounds from.
+const SPEEDS = [['slower', 'Slower', 0.55], ['normal', 'Normal', 0.75], ['native', 'Native', 0.95]];
+function getSpeed(){ try { return localStorage.getItem(SPEED_KEY) || 'normal'; } catch(e){ return 'normal'; } }
+function setSpeed(k){ try { localStorage.setItem(SPEED_KEY, k); } catch(e){} }
 const Speech = {
   voice: null,
   ok: 'speechSynthesis' in window,
@@ -514,13 +522,16 @@ const Speech = {
   choose(name){ this.voice = this.all().find(v => v.name === name) || this.voice; try { localStorage.setItem(VOICE_KEY, name); } catch(e){} },
   isBrazilian(){ return !!this.voice && /BR$/i.test(this.voice.lang); },
   isNatural(){ return !!this.voice && /natural|neural|online|enhanced|premium|aprimorad/i.test(this.voice.name + ' ' + this.voice.voiceURI); },
-  get slow(){ return this.isNatural() ? 0.75 : 0.65; },
+  get base(){ return (SPEEDS.find(s => s[0] === getSpeed()) || SPEEDS[1])[2]; },
+  get slow(){ return Math.max(0.4, this.base * 0.65); },
+  // slow first so you can hear each sound, then once more at your normal speed
+  sayLearn(text){ this.say(text, this.slow, () => setTimeout(() => this.say(text), 500)); },
   say(text, rate, onend){
     if (!this.ok) return;
     speechSynthesis.cancel();
     const u = new SpeechSynthesisUtterance(text.replace(/…/g, '').replace(/ \/ /g, '. '));
     u.lang = 'pt-BR'; if (this.voice) u.voice = this.voice;
-    u.rate = rate ?? (this.isNatural() ? 1 : 0.95);
+    u.rate = rate ?? this.base;
     if (onend) u.onend = onend;
     speechSynthesis.speak(u);
   }
@@ -650,7 +661,7 @@ function closeSheet(){
 const playBtns = (pt, i) => `<button class="ic" data-say="${i}" aria-label="Play">▶</button><button class="ic slow" data-slow="${i}" aria-label="Play slowly">slow</button>${SR ? `<button class="ic" data-mic="${i}" aria-label="Say it and check">🎤</button>` : ''}`;
 function bindPhraseButtons(root, phrases){
   root.querySelectorAll('[data-say]').forEach(b => b.addEventListener('click', () => Speech.say(phrases[+b.dataset.say])));
-  root.querySelectorAll('[data-slow]').forEach(b => b.addEventListener('click', () => Speech.say(phrases[+b.dataset.slow], Speech.slow)));
+  root.querySelectorAll('[data-slow]').forEach(b => b.addEventListener('click', () => Speech.sayLearn(phrases[+b.dataset.slow])));
   root.querySelectorAll('[data-mic]').forEach(b => b.addEventListener('click', () => {
     const i = +b.dataset.mic, out = root.querySelector(`[data-fb="${i}"]`);
     b.classList.add('rec'); out.innerHTML = '<span class="fb">Listening… speak now</span>';
@@ -658,8 +669,20 @@ function bindPhraseButtons(root, phrases){
   }));
 }
 
-function voiceNote(){
+function speedBarHTML(){
+  if (!Speech.ok) return '';
+  return `<div class="speed" role="group" aria-label="Speaking speed"><span>Speed</span>${SPEEDS.map(([k, label]) =>
+    `<button data-speed="${k}" aria-pressed="${getSpeed() === k}">${label}</button>`).join('')}</div>`;
+}
+document.addEventListener('click', e => {
+  const b = e.target.closest('[data-speed]'); if (!b) return;
+  setSpeed(b.dataset.speed);
+  document.querySelectorAll('[data-speed]').forEach(x => x.setAttribute('aria-pressed', x.dataset.speed === b.dataset.speed));
+  Speech.say('Obrigado');
+});
+function voiceNote(withSpeed = true){
   if (!Speech.ok) return `<p class="note">Your browser can't play audio. Use Chrome or Edge.</p>`;
+  if (withSpeed) return voiceNote(false) + speedBarHTML();
   if (Speech.voice && !Speech.isBrazilian()) return `<p class="note">No Brazilian voice found, so audio uses a European Portuguese voice. For a Brazilian one, use Chrome or Edge, or add "Portuguese (Brazil)" in Windows Settings → Time & language → Speech.</p>`;
   if (!Speech.voice) return `<p class="note">No Portuguese voice found yet. If there's no audio, use Chrome or Edge, or add "Portuguese (Brazil)" in Windows Settings → Time & language → Speech.</p>`;
   return '';
@@ -679,6 +702,7 @@ function voiceCardHTML(){
     <p class="muted small" style="margin-top:6px">${tip}</p>
     ${vs.length ? `<div class="voice-row"><select id="voice-sel" aria-label="Voice">${vs.map(v => `<option value="${v.name}" ${cur && v.name === cur.name ? 'selected' : ''}>${voiceLabel(v)} · ${/BR$/i.test(v.lang) ? 'Brazil' : 'Portugal'}</option>`).join('')}</select>
       <button class="ic" id="voice-test">▶ Test</button></div>` : ''}
+    ${speedBarHTML()}
   </div>`;
 }
 function bindVoiceCard(root){
@@ -697,7 +721,7 @@ function openLesson(title){
     <p class="muted">${g ? g.d : ''}</p>
     ${voiceNote()}
     <div class="tipbox">${l.tip}</div>
-    ${l.items.length ? `<p class="small muted">Tap ▶ to hear it, then say it out loud. ${SR ? 'Tap 🎤 to check your pronunciation.' : ''}</p>
+    ${l.items.length ? `<p class="small muted">Tap ▶ to hear it. Tap <b>slow</b> to hear it slowly, then once more at normal speed. Say it out loud after each. ${SR ? 'Tap 🎤 to check your pronunciation.' : ''}</p>
     <ul class="phrases">${l.items.map(([pt, en, hint], i) => `<li>
       <div class="ph-main"><div><div class="ph-pt" lang="pt-BR">${pt}</div><div class="ph-en">${en}${hint ? ` <span class="hint">· ${hint}</span>` : ''}</div></div>
       <div class="ph-btns">${playBtns(pt, i)}</div></div><div data-fb="${i}"></div></li>`).join('')}</ul>
@@ -831,7 +855,7 @@ function practiceHTML(){
   const dl = DIALOGUES.filter(x => LV[x.lv].i <= Math.max(lvlMax, 1));
   const missing = planGoalTitles().length - titles.length;
   return `
-    ${voiceNote()}
+    ${voiceNote(false)}
     ${voiceCardHTML()}
     <div class="card"><div class="eyebrow">Flashcards</div>
       <h2 style="margin-top:4px">${nDue} due now</h2>

@@ -1,5 +1,5 @@
 // Offline support. Bump CACHE whenever index.html changes so phones pick up the new version.
-const CACHE = 'rumo-v2';
+const CACHE = 'rumo-v3';
 const ASSETS = ['./', 'index.html', 'manifest.json', 'icons/icon-192.png', 'icons/icon-512.png', 'icons/apple-touch-icon.png', 'icons/icon-maskable-512.png'];
 
 self.addEventListener('install', e => {
@@ -28,7 +28,8 @@ self.addEventListener('fetch', e => {
 
   // The app page: try the network first so updates arrive, fall back to the saved copy offline
   if (req.mode === 'navigate') {
-    e.respondWith(fetch(req).then(r => { const copy = r.clone(); caches.open(CACHE).then(c => c.put('index.html', copy)); return r; })
+    // no-cache: always ask GitHub whether the page changed (it otherwise allows a 10-minute-old copy)
+    e.respondWith(fetch(req, {cache: 'no-cache'}).then(r => { const copy = r.clone(); caches.open(CACHE).then(c => c.put('index.html', copy)); return r; })
       .catch(() => caches.match('index.html', {ignoreSearch: true})));
     return;
   }

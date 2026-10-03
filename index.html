@@ -82,7 +82,7 @@ input:focus,select:focus,button:focus-visible,summary:focus-visible{outline:2px 
 .fix{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:12px}
 .fix p{margin-bottom:8px}
 .bar{height:10px;background:var(--line);border-radius:99px;overflow:hidden}
-.bar i{display:block;height:100%;background:var(--green);border-radius:99px;transition:width .3s}
+.bar i{display:block;height:100%;background:var(--green);border-radius:99px}
 .bar.sun i{background:var(--sun)}
 .prog{display:grid;gap:12px;margin-top:6px}
 .prog .lbl{display:flex;justify-content:space-between;font-size:14px;margin-bottom:4px}
@@ -1364,7 +1364,7 @@ function renderPlan(){
       <button class="btn ghost small" id="extend2">Extend by 7 days</button>
       <button class="btn ghost small" id="reset">Start a new plan</button>
     </div>`}
-    <p class="muted small" style="margin-top:24px;text-align:center">App version 3</p>`;
+    <p class="muted small" style="margin-top:24px;text-align:center">App version 4</p>`;
 
   const app = $('#app');
   bindPractice(app);

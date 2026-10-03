@@ -50,6 +50,7 @@ p{margin:0 0 10px}
 .card{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:20px;margin-top:16px}
 .eyebrow{font-size:13px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:var(--green)}
 header.top{display:flex;justify-content:space-between;align-items:flex-start;gap:12px}
+.gear{flex:none;border:1px solid var(--line);background:var(--card);color:var(--ink);border-radius:99px;padding:9px 14px;font:600 14px Figtree,sans-serif;cursor:pointer;white-space:nowrap}
 label{display:block;font-weight:600;font-size:15px;margin:18px 0 6px}
 label .muted{font-weight:400}
 input,select{width:100%;font:inherit;color:var(--ink);background:var(--bg);border:1px solid var(--line);border-radius:10px;padding:11px 12px}
@@ -705,6 +706,13 @@ function voiceCardHTML(){
     ${speedBarHTML()}
   </div>`;
 }
+function openSettings(){
+  const body = openSheet(`<div class="eyebrow">Settings</div><h2>Voice & speed</h2>
+    <p class="muted small">Pick the voice and how fast it talks. Your choice is used everywhere in the app.</p>
+    ${voiceNote(false)}${voiceCardHTML()}`);
+  bindVoiceCard(body);
+}
+document.addEventListener('click', e => { if (e.target.closest('[data-settings]')) openSettings(); });
 function bindVoiceCard(root){
   const sel = root.querySelector('#voice-sel');
   sel?.addEventListener('change', () => { Speech.choose(sel.value); Speech.say('Oi! Tudo bem? Eu vou te ajudar a aprender português.'); render(); });
@@ -1142,7 +1150,7 @@ function renderSetup(){
       <div class="eyebrow">Brazilian Portuguese · from zero</div>
       <h1>Rumo ao Português</h1>
       <p class="muted">Pick a level and a deadline. You'll get the hours you need and a day-by-day plan to get there.</p>
-    </div></header>
+    </div><button class="gear" data-settings aria-label="Settings: voice and speed">⚙ Settings</button></header>
     <div class="card">
       <h2>Your goal</h2>
       <div class="levels" id="levels">${lv}</div>
@@ -1330,7 +1338,7 @@ function renderPlan(){
       <div class="eyebrow">Rumo ao Português</div>
       <h1>${lvl.name} <span class="muted" style="font-size:.6em">${lvl.cefr}</span></h1>
       <p class="muted">${niceDate(plan.start)} → ${niceDate(end)} · ${plan.days.length} days · about ${fmtNum(plan.hpd)} hrs per study day</p>
-    </div></header>
+    </div><button class="gear" data-settings aria-label="Settings: voice and speed">⚙ Settings</button></header>
     <div class="tabs" role="tablist"><button role="tab" data-tab="plan" aria-selected="${tab==='plan'}">Plan</button><button role="tab" data-tab="practice" aria-selected="${tab==='practice'}">Practice${dueList().length?` · ${dueList().length} due`:''}</button></div>
     ${tab==='practice' ? practiceHTML() : `
 
@@ -1364,7 +1372,7 @@ function renderPlan(){
       <button class="btn ghost small" id="extend2">Extend by 7 days</button>
       <button class="btn ghost small" id="reset">Start a new plan</button>
     </div>`}
-    <p class="muted small" style="margin-top:24px;text-align:center">App version 4</p>`;
+    <p class="muted small" style="margin-top:24px;text-align:center">App version 5</p>`;
 
   const app = $('#app');
   bindPractice(app);

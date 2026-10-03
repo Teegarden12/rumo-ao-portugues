@@ -1,5 +1,5 @@
-// Offline support. Bump CACHE whenever index.html changes so phones pick up the new version.
-const CACHE = 'rumo-v4';
+﻿// Offline support. Bump CACHE whenever index.html changes so phones pick up the new version.
+const CACHE = 'rumo-v5';
 const ASSETS = ['./', 'index.html', 'manifest.json', 'icons/icon-192.png', 'icons/icon-512.png', 'icons/apple-touch-icon.png', 'icons/icon-maskable-512.png'];
 
 self.addEventListener('install', e => {

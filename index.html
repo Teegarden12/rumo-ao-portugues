@@ -1,0 +1,1373 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Rumo ao Português</title>
+<meta name="theme-color" content="#0d6b4c">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="apple-mobile-web-app-title" content="Português">
+<link rel="manifest" href="manifest.json">
+<link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
+<link rel="icon" type="image/png" href="icons/icon-192.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,700&family=Figtree:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#f7f4ec; --card:#ffffff; --ink:#1d2a24; --muted:#5d6b64; --line:#e3ddcf;
+  --green:#0d6b4c; --green-soft:#dcefe6; --sun:#f2b632; --sun-soft:#fdf1d3;
+  --blue:#244a8f; --red:#b3402e; --red-soft:#f8e1dc;
+  --c-listen:#244a8f; --c-speak:#0d6b4c; --c-vocab:#d0901a; --c-gram:#8a4f9e; --c-review:#7b8a83;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --bg:#121815; --card:#1b2420; --ink:#eef2ef; --muted:#9fb0a8; --line:#2c3833;
+    --green:#4cc394; --green-soft:#1d3a2f; --sun:#f2c14e; --sun-soft:#3a3120;
+    --blue:#8fb0f0; --red:#f08a76; --red-soft:#3d2420;
+    --c-listen:#6f95e0; --c-speak:#4cc394; --c-vocab:#f2c14e; --c-gram:#c48ad6; --c-review:#93a59c;
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#121815; --card:#1b2420; --ink:#eef2ef; --muted:#9fb0a8; --line:#2c3833;
+  --green:#4cc394; --green-soft:#1d3a2f; --sun:#f2c14e; --sun-soft:#3a3120;
+  --blue:#8fb0f0; --red:#f08a76; --red-soft:#3d2420;
+  --c-listen:#6f95e0; --c-speak:#4cc394; --c-vocab:#f2c14e; --c-gram:#c48ad6; --c-review:#93a59c;
+}
+*{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%}
+body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.5 Figtree,system-ui,sans-serif}
+.wrap{max-width:720px;margin:0 auto;padding:24px 16px 64px}
+h1,h2,h3{font-family:"Bricolage Grotesque",system-ui,sans-serif;line-height:1.15;margin:0}
+h1{font-size:clamp(28px,7vw,40px)}
+h2{font-size:22px;margin-bottom:12px}
+h3{font-size:17px}
+p{margin:0 0 10px}
+.muted{color:var(--muted)}
+.small{font-size:14px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:20px;margin-top:16px}
+.eyebrow{font-size:13px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:var(--green)}
+header.top{display:flex;justify-content:space-between;align-items:flex-start;gap:12px}
+label{display:block;font-weight:600;font-size:15px;margin:18px 0 6px}
+label .muted{font-weight:400}
+input,select{width:100%;font:inherit;color:var(--ink);background:var(--bg);border:1px solid var(--line);border-radius:10px;padding:11px 12px}
+input:focus,select:focus,button:focus-visible,summary:focus-visible{outline:2px solid var(--green);outline-offset:2px}
+.levels{display:grid;gap:8px}
+.lvl{margin:0;font-weight:400;font-size:16px;display:flex;gap:12px;align-items:flex-start;border:1px solid var(--line);border-radius:12px;padding:12px;cursor:pointer;background:var(--bg)}
+.lvl input{width:auto;margin-top:4px;accent-color:var(--green)}
+.lvl b{display:block}
+.lvl .tag{font-size:12px;font-weight:600;color:var(--muted)}
+.lvl:has(input:checked){border-color:var(--green);background:var(--green-soft)}
+.seg{display:flex;border:1px solid var(--line);border-radius:10px;overflow:hidden;margin-bottom:10px}
+.seg button{flex:1;border:0;background:transparent;padding:9px;font:inherit;color:var(--muted);cursor:pointer}
+.seg button[aria-pressed="true"]{background:var(--green);color:#fff;font-weight:600}
+.row2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.btn{display:inline-block;border:0;border-radius:12px;padding:13px 18px;font:600 16px Figtree,sans-serif;cursor:pointer;background:var(--green);color:#fff}
+.btn:disabled{opacity:.45;cursor:not-allowed}
+.btn.ghost{background:transparent;color:var(--green);border:1px solid var(--green)}
+.btn.small{padding:8px 12px;font-size:14px;border-radius:10px}
+.btn.full{width:100%;margin-top:18px}
+.verdict{border-radius:12px;padding:14px;margin-top:14px}
+.verdict.ok{background:var(--green-soft)}
+.verdict.warn{background:var(--sun-soft)}
+.verdict.bad{background:var(--red-soft)}
+.verdict h3{margin-bottom:6px}
+.stats{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:12px}
+.stat{background:var(--bg);border-radius:10px;padding:10px;text-align:center}
+.stat b{display:block;font-family:"Bricolage Grotesque",sans-serif;font-size:24px}
+.stat span{font-size:12px;color:var(--muted)}
+.fixes{display:grid;gap:8px;margin-top:10px}
+.fix{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:12px}
+.fix p{margin-bottom:8px}
+.bar{height:10px;background:var(--line);border-radius:99px;overflow:hidden}
+.bar i{display:block;height:100%;background:var(--green);border-radius:99px;transition:width .3s}
+.bar.sun i{background:var(--sun)}
+.prog{display:grid;gap:12px;margin-top:6px}
+.prog .lbl{display:flex;justify-content:space-between;font-size:14px;margin-bottom:4px}
+.phrase{background:var(--sun-soft);border-color:transparent}
+.phrase .pt{font-family:"Bricolage Grotesque",sans-serif;font-size:24px;margin:4px 0}
+.banner{background:var(--red-soft);border-radius:12px;padding:14px;margin-top:16px;display:flex;gap:12px;align-items:center;justify-content:space-between;flex-wrap:wrap}
+.blocks{display:flex;height:8px;border-radius:99px;overflow:hidden;margin:10px 0 6px}
+.blocks i{display:block;height:100%}
+.legend{display:flex;flex-wrap:wrap;gap:4px 12px;font-size:13px;color:var(--muted)}
+.legend span::before{content:"";display:inline-block;width:8px;height:8px;border-radius:2px;margin-right:5px;background:var(--c)}
+.goals{list-style:none;padding:0;margin:12px 0 0;display:grid;gap:8px}
+.goal{display:flex;gap:10px;align-items:flex-start}
+.goal input{width:20px;height:20px;margin:2px 0 0;flex:none;accent-color:var(--green)}
+.goal .g-t{font-weight:600}
+.goal .g-d{font-size:14px;color:var(--muted)}
+.goal.done .g-t{text-decoration:line-through;color:var(--muted)}
+.pill{display:inline-block;font-size:12px;font-weight:600;border-radius:99px;padding:2px 8px;background:var(--bg);color:var(--muted);margin-left:4px;white-space:nowrap}
+.pill.rev{background:var(--sun-soft);color:var(--ink)}
+.pill.miss{background:var(--red-soft);color:var(--red)}
+.pill.ok{background:var(--green-soft);color:var(--green)}
+.milestone{margin-top:12px;padding:8px 12px;font-size:14px;background:var(--sun-soft);border-radius:10px}
+details.week{border:1px solid var(--line);border-radius:12px;margin-top:10px;background:var(--card)}
+details.week>summary{list-style:none;cursor:pointer;padding:14px 16px;display:flex;justify-content:space-between;gap:8px;font-weight:600}
+details.week>summary::-webkit-details-marker{display:none}
+details.week>summary::after{content:"+";color:var(--muted)}
+details.week[open]>summary::after{content:"–"}
+.day{padding:14px 16px;border-top:1px solid var(--line)}
+.day.today{background:var(--green-soft)}
+.day-h{display:flex;justify-content:space-between;align-items:baseline;gap:8px;flex-wrap:wrap}
+.day.off{color:var(--muted);font-size:14px}
+.how{margin:10px 0 0;padding:10px 12px 10px 28px;background:var(--bg);border-radius:10px;font-size:14px;display:grid;gap:4px}
+.method{margin-top:16px}
+.method-list{margin:0;padding:0 16px 16px 36px;display:grid;gap:10px;font-size:15px}
+.res{display:grid;gap:12px}
+.tabs{display:flex;gap:6px;margin-top:18px;border-bottom:1px solid var(--line)}
+.tabs button{border:0;background:transparent;font:600 15px Figtree,sans-serif;color:var(--muted);padding:10px 14px;cursor:pointer;border-bottom:3px solid transparent;margin-bottom:-1px}
+.tabs button[aria-selected="true"]{color:var(--ink);border-bottom-color:var(--green)}
+.lesson-btn{border:0;background:transparent;color:var(--green);font:600 14px Figtree,sans-serif;padding:4px 0 0;cursor:pointer}
+.quick{display:flex;flex-wrap:wrap;gap:8px;margin-top:14px}
+.list{display:grid;gap:6px;margin-top:12px}
+.row-btn{display:flex;justify-content:space-between;align-items:center;gap:8px;width:100%;text-align:left;border:1px solid var(--line);background:var(--bg);color:var(--ink);border-radius:10px;padding:11px 12px;font:500 15px Figtree,sans-serif;cursor:pointer}
+.row-btn:hover{border-color:var(--green)}
+.note{background:var(--sun-soft);border-radius:10px;padding:10px 12px;font-size:14px;margin:12px 0 0}
+.sheet{position:fixed;inset:0;background:rgba(10,20,15,.45);z-index:50;display:flex;justify-content:center;align-items:flex-end}
+.sheet[hidden]{display:none}
+.sheet-in{background:var(--card);width:100%;max-width:640px;max-height:92vh;overflow:auto;border-radius:20px 20px 0 0;padding:24px 16px 32px;position:relative}
+@media (min-width:700px){.sheet{align-items:center}.sheet-in{border-radius:20px;padding:28px}}
+.sheet-x{position:absolute;top:10px;right:10px;width:40px;height:40px;border:0;border-radius:99px;background:var(--bg);color:var(--ink);font-size:24px;cursor:pointer}
+.sheet-in h2{margin:4px 40px 8px 0}
+.voice-row{display:flex;gap:8px;margin-top:10px}.voice-row select{flex:1}
+.tipbox{background:var(--green-soft);border-radius:12px;padding:12px 14px;margin:12px 0;font-size:15px}
+.phrases{list-style:none;padding:0;margin:8px 0;display:grid;gap:6px}
+.phrases li{border:1px solid var(--line);border-radius:12px;padding:10px 12px}
+.ph-main{display:flex;justify-content:space-between;align-items:center;gap:10px}
+.ph-pt{font-weight:600;font-size:17px}
+.ph-en{font-size:14px;color:var(--muted)}
+.hint{font-size:13px;color:var(--muted);font-style:italic}
+.ph-btns{display:flex;gap:6px;flex:none}
+.ic{border:1px solid var(--line);background:var(--bg);color:var(--ink);border-radius:99px;min-width:40px;height:40px;padding:0 10px;font:600 14px Figtree,sans-serif;cursor:pointer}
+.ic.slow{font-size:12px;color:var(--muted)}
+.ic.big{min-width:64px;height:64px;font-size:22px;background:var(--green);color:#fff;border:0}
+.ic.rec{background:var(--red);color:#fff;border-color:var(--red)}
+.fb{display:block;font-size:13px;margin-top:6px;color:var(--muted)}
+.fb.good{color:var(--green)} .fb.mid{color:#a86d00} .fb.bad{color:var(--red)}
+.sheet-actions{display:flex;flex-wrap:wrap;gap:8px;margin-top:16px;align-items:center}
+.fc{text-align:center;margin-top:10px}
+.fc-q{font-family:"Bricolage Grotesque",sans-serif;font-size:26px;font-weight:600;margin:18px 0}
+.fc-pt{font-family:"Bricolage Grotesque",sans-serif;font-size:28px;font-weight:700;color:var(--green)}
+.rates{display:grid;grid-template-columns:repeat(4,1fr);gap:6px;margin-top:8px}
+.rate{border:1px solid var(--line);background:var(--bg);color:var(--ink);border-radius:10px;padding:8px 4px;cursor:pointer;font:14px Figtree,sans-serif}
+.rate b{display:block} .rate span{font-size:12px;color:var(--muted)}
+.r-again b{color:var(--red)} .r-good b{color:var(--green)}
+.opts{display:grid;gap:8px;text-align:left}
+.opt{border:1px solid var(--line);background:var(--bg);color:var(--ink);border-radius:10px;padding:12px;font:500 15px Figtree,sans-serif;cursor:pointer;text-align:left}
+.opt.correct{background:var(--green-soft);border-color:var(--green)} .opt.wrong{background:var(--red-soft);border-color:var(--red)}
+.chat{display:flex;flex-direction:column;gap:8px;margin:14px 0}
+.bubble{max-width:85%;padding:10px 12px;border-radius:14px;cursor:pointer}
+.bubble .en{font-size:13px;color:var(--muted)}
+.bubble.them{background:var(--bg);align-self:flex-start;border-bottom-left-radius:4px}
+.bubble.you{background:var(--green-soft);align-self:flex-end;border-bottom-right-radius:4px}
+.yourturn{border:1px dashed var(--green);border-radius:12px;padding:12px}
+.yt-en{font-size:18px;font-weight:600;margin:2px 0}
+.res h3{font-size:15px;font-family:Figtree,sans-serif}
+.res ul{margin:4px 0 0;padding-left:18px;font-size:14px}
+.res a{color:var(--green)}
+.footer-actions{display:flex;gap:10px;flex-wrap:wrap;margin-top:24px}
+@media (max-width:420px){.stats{grid-template-columns:1fr 1fr 1fr}.stat b{font-size:20px}}
+</style>
+</head>
+<body>
+<div class="wrap" id="app"></div>
+
+<script>
+/* Lesson content, keyed by goal title in index.html.
+   items: [Portuguese, English, optional sound-it-out hint] */
+const LESSONS = {
+  'Sounds of Brazilian Portuguese': {
+    tip: 'Five rules unlock most of what you hear. <b>1)</b> A tilde (~) or a vowel before m/n at the end of a syllable is nasal: say "song", hold the "ong", and let air out through your nose. <b>2)</b> Final -e sounds like "ee" and final -o like "oo". <b>3)</b> "de" and "te" (and "di", "ti") sound like "jee" and "chee". <b>4)</b> "r" at the start of a word and "rr" sound like an English h. <b>5)</b> Final -l sounds like "w": Brasil = "brah-ZEEW". Tap ▶ on each word and copy it out loud.',
+    items: [
+      ['não','no','nown (nasal)'],
+      ['pão','bread','pown (nasal)'],
+      ['mãe','mother','mine (nasal)'],
+      ['bom','good','bohng (barely say the m)'],
+      ['muito','very / a lot','MWEEN-too (nasal)'],
+      ['leite','milk','LAY-chee'],
+      ['noite','night','NOY-chee'],
+      ['cidade','city','see-DAH-jee'],
+      ['obrigado','thank you (said by a man)','oh-bree-GAH-doo'],
+      ['Rio de Janeiro','Rio de Janeiro','HEE-oo jee zhah-NAY-roo'],
+      ['carro','car','KAH-hoo'],
+      ['Brasil','Brazil','brah-ZEEW'],
+      ['tchau','bye','chow']
+    ]
+  },
+  'The 100 most common words': {
+    tip: 'These little words are everywhere. Learn them inside short phrases, because that is how you\'ll hear them.',
+    items: [
+      ['eu','I'],['você','you'],['não','no / not'],['sim','yes'],['é','it is'],
+      ['tem…?','is there…? / do you have…?'],['eu quero','I want'],['eu preciso de','I need'],
+      ['eu gosto de','I like'],['eu não sei','I don\'t know'],['eu acho que','I think that'],
+      ['aqui','here'],['agora','now'],['muito','very / a lot'],['mais','more'],['também','also / too'],
+      ['com','with'],['sem','without'],['isso','this / that'],['tudo','everything'],['mas','but'],
+      ['porque','because'],['então','so / then'],['de novo','again']
+    ]
+  },
+  'Cognate shortcut: words you already know': {
+    tip: '<b>-tion → -ção</b> (and these are feminine: a estação). <b>-ty → -dade</b> (also feminine: a cidade). <b>-ly → -mente</b>. <b>-ble → -vel</b>. Many words are almost identical: hotel, hospital, restaurante, importante. The last five cards are <b>false friends</b>: they look like English but mean something else.',
+    items: [
+      ['a estação','the station'],['a informação','information'],['a situação','the situation'],
+      ['a universidade','the university'],['a realidade','reality'],['realmente','really'],
+      ['normalmente','normally'],['possível','possible'],['impossível','impossible'],
+      ['importante','important'],['o restaurante','the restaurant'],['o problema','the problem (masculine!)'],
+      ['puxar','to pull (not push!)'],['pretender','to intend / plan to'],['esquisito','weird (not exquisite)'],
+      ['a livraria','the bookstore (not library)'],['os parentes','relatives (not parents)']
+    ]
+  },
+  'Greetings & goodbyes': {
+    tip: '"Oi" is the everyday hello. "Tudo bem?" literally means "all good?". Answer "Tudo bem, e você?". Use bom dia until noon, boa tarde until dark, then boa noite (also for goodbye at night).',
+    items: [
+      ['Oi!','Hi!'],['Olá!','Hello! (a bit more formal)'],['Tudo bem?','How\'s it going?'],
+      ['Tudo bem, e você?','Good, and you?'],['Tudo bom?','All good?'],['Bom dia!','Good morning!','bohng JEE-ah'],
+      ['Boa tarde!','Good afternoon!'],['Boa noite!','Good evening / Good night!'],['Tchau!','Bye!'],
+      ['Até logo!','See you later!'],['Até amanhã!','See you tomorrow!']
+    ]
+  },
+  'Introduce yourself': {
+    tip: 'Men say <b>americano</b> and <b>obrigado</b>; women say <b>americana</b> and <b>obrigada</b>. Swap in your own name and city wherever you see "…".',
+    items: [
+      ['Meu nome é …','My name is …'],['Eu me chamo …','I\'m called …'],['Como você se chama?','What\'s your name?'],
+      ['Eu sou dos Estados Unidos.','I\'m from the United States.'],['Eu sou americano.','I\'m American. (man)'],
+      ['Eu sou americana.','I\'m American. (woman)'],['De onde você é?','Where are you from?'],
+      ['Eu moro em …','I live in …'],['Prazer!','Nice to meet you!'],['Muito prazer!','Very nice to meet you!'],
+      ['Eu tô aprendendo português.','I\'m learning Portuguese.']
+    ]
+  },
+  'Polite lifesavers': {
+    tip: 'These keep a conversation alive when you get lost, so learn them first. "Desculpa" means sorry; "com licença" means excuse me (to get past someone or get attention).',
+    items: [
+      ['Por favor.','Please.'],['Obrigado. / Obrigada.','Thank you. (man / woman)'],['De nada.','You\'re welcome.'],
+      ['Desculpa.','Sorry.'],['Com licença.','Excuse me.'],['Não entendi.','I didn\'t understand.'],
+      ['Pode repetir?','Can you repeat that?'],['Fala mais devagar, por favor.','Speak more slowly, please.'],
+      ['Você fala inglês?','Do you speak English?'],['Como se diz … em português?','How do you say … in Portuguese?'],
+      ['O que significa isso?','What does this mean?'],['Sem problema.','No problem.']
+    ]
+  },
+  'How Brazilians really talk': {
+    tip: 'Textbooks write <b>está, estou, para, você</b>. Brazilians say <b>tá, tô, pra, cê</b>. "Né?" goes at the end of sentences like "right?". "A gente" means "we" and uses the ele/ela verb: <b>a gente vai</b> (not "a gente vamos").',
+    items: [
+      ['Tá bom.','OK. / Fine.'],['Tá certo.','That\'s right. / OK.'],['Tô cansado.','I\'m tired.'],
+      ['Tô com fome.','I\'m hungry.'],['Cê tá bem?','Are you OK?'],['Vou pra praia.','I\'m going to the beach.'],
+      ['Vou pro centro.','I\'m going downtown.'],['Legal, né?','Cool, right?'],['A gente vai sair.','We\'re going out.'],
+      ['A gente se vê!','See you!'],['Beleza?','All good? (casual)'],['Beleza!','Cool! / Sounds good!']
+    ]
+  },
+  'Numbers 0–100 & prices': {
+    tip: '1 and 2 change with gender: <b>um/uma</b>, <b>dois/duas</b>. Brazilians often say <b>meia</b> (half a dozen) for 6 in phone numbers. Prices: "vinte reais" (R$20), "cinco e cinquenta" (R$5.50).',
+    items: [
+      ['um, dois, três','1, 2, 3'],['quatro, cinco, seis','4, 5, 6'],['sete, oito, nove, dez','7, 8, 9, 10'],
+      ['onze, doze, treze','11, 12, 13'],['quatorze, quinze, dezesseis','14, 15, 16'],
+      ['dezessete, dezoito, dezenove','17, 18, 19'],['vinte, vinte e um','20, 21'],
+      ['trinta, quarenta, cinquenta','30, 40, 50'],['sessenta, setenta','60, 70'],
+      ['oitenta, noventa, cem','80, 90, 100'],['Quanto custa?','How much does it cost?'],
+      ['Quanto é?','How much is it?'],['São vinte reais.','It\'s twenty reais.'],
+      ['Cinco e cinquenta.','Five fifty (R$5.50).']
+    ]
+  },
+  'Ordering food & drinks': {
+    tip: '"Eu quero…" is fine in Brazil; "Pode me trazer…?" is a bit more polite. "Pra viagem" means to go. Water comes <b>com gás</b> (sparkling) or <b>sem gás</b> (still).',
+    items: [
+      ['Eu quero um café, por favor.','I\'d like a coffee, please.'],['Pode me trazer uma água?','Can you bring me a water?'],
+      ['Com gás ou sem gás?','Sparkling or still?'],['O cardápio, por favor.','The menu, please.'],
+      ['O que você recomenda?','What do you recommend?'],['Pra comer aqui.','To eat here.'],['Pra viagem.','To go.'],
+      ['A conta, por favor.','The check, please.'],['Aceita cartão?','Do you take cards?'],['Tá delicioso!','It\'s delicious!'],
+      ['o suco','the juice'],['a cerveja','the beer'],['o pão de queijo','cheese bread'],['arroz e feijão','rice and beans'],
+      ['o frango','chicken'],['a carne','meat / beef'],['o peixe','fish'],['sem açúcar','without sugar']
+    ]
+  },
+  'Directions & places': {
+    tip: '"Onde fica…?" is the key question. Listen for <b>esquerda</b> (left), <b>direita</b> (right) and <b>reto</b> (straight ahead). "Perto" means near and "longe" means far.',
+    items: [
+      ['Onde fica o banheiro?','Where\'s the bathroom?'],['Onde fica o metrô?','Where\'s the subway?'],
+      ['o ponto de ônibus','the bus stop'],['É perto?','Is it close?'],['É longe?','Is it far?'],
+      ['à esquerda','on the left'],['à direita','on the right'],['Siga reto.','Go straight.'],
+      ['Vire à direita.','Turn right.'],['na esquina','at the corner'],['a farmácia','the pharmacy'],
+      ['o mercado','the market / grocery store'],['a praia','the beach']
+    ]
+  },
+  'The six question words': {
+    tip: 'With these and a pointing finger you can ask almost anything. Raise your voice at the end and it\'s a question.',
+    items: [
+      ['O quê?','What?'],['O que é isso?','What is this?'],['Onde?','Where?'],['Quando?','When?'],
+      ['Quanto?','How much?'],['Quem?','Who?'],['Como?','How? / Pardon?'],['Por quê?','Why?'],
+      ['Que horas são?','What time is it?']
+    ]
+  },
+  'Survival role-play': {
+    tip: 'Open <b>Practice → Conversations</b> and play the café, taxi and hotel scenes. The app speaks the other person\'s lines and you answer out loud.',
+    dialogues: ['At the café','Taking a taxi','Hotel check-in','Asking directions'],
+    items: []
+  },
+  'Pronouns + the verb "ser"': {
+    tip: '"Ser" is for what something <i>is</i>: identity, origin, job, personality. In speech, "a gente" (we) is more common than "nós".',
+    items: [
+      ['Eu sou professor.','I\'m a teacher.'],['Você é brasileiro?','Are you Brazilian?'],['Ela é muito simpática.','She\'s very nice.'],
+      ['Ele é do Rio.','He\'s from Rio.'],['A gente é da Califórnia.','We\'re from California.'],['Nós somos amigos.','We\'re friends.'],
+      ['Vocês são de onde?','Where are you all from?'],['Eles são altos.','They\'re tall.']
+    ]
+  },
+  '"Estar" vs "ser"': {
+    tip: '"Estar" (spoken: tá/tô) is for how or where something is <i>right now</i>. "Eu sou feliz" = I\'m a happy person; "Eu tô feliz" = I\'m happy today.',
+    items: [
+      ['Eu tô cansado.','I\'m tired.'],['Onde você está?','Where are you?'],['Ela está em casa.','She\'s at home.'],
+      ['Tô feliz hoje.','I\'m happy today.'],['Tá frio.','It\'s cold.'],['Tá tudo bem.','Everything\'s fine.'],
+      ['O café está quente.','The coffee is hot.'],['Como você está?','How are you?']
+    ]
+  },
+  '"Ter" and "ir" + the easy future': {
+    tip: '"Vou + verb" is the easy future, the one Brazilians actually use: <b>Vou comer</b> = I\'m going to eat. "Tem" also means "there is".',
+    items: [
+      ['Eu tenho dois irmãos.','I have two brothers.'],['Você tem tempo?','Do you have time?'],
+      ['Tem um banheiro aqui?','Is there a bathroom here?'],['Eu tenho que trabalhar.','I have to work.'],
+      ['Eu vou pro mercado.','I\'m going to the store.'],['Vou comer agora.','I\'m going to eat now.'],
+      ['A gente vai viajar amanhã.','We\'re going to travel tomorrow.'],['O que você vai fazer hoje?','What are you going to do today?']
+    ]
+  },
+  'Regular -ar verbs (present)': {
+    tip: 'falar → eu fal<b>o</b>, você/ele/a gente fal<b>a</b>, nós fal<b>amos</b>, vocês/eles fal<b>am</b>. Every regular -ar verb follows this pattern.',
+    items: [
+      ['Eu falo um pouco de português.','I speak a little Portuguese.'],['Você fala inglês?','Do you speak English?'],
+      ['Onde você mora?','Where do you live?'],['Eu moro em …','I live in …'],['Eu trabalho com computadores.','I work with computers.'],
+      ['Eu gosto de música.','I like music.'],['A gente estuda à noite.','We study at night.'],['Eles trabalham muito.','They work a lot.']
+    ]
+  },
+  'Regular -er/-ir verbs + "fazer"': {
+    tip: 'comer → eu com<b>o</b>, você com<b>e</b>, nós com<b>emos</b>, eles com<b>em</b>. -ir verbs are the same except nós: abr<b>imos</b>. "Fazer" is irregular: eu faço, você faz.',
+    items: [
+      ['Eu como arroz e feijão.','I eat rice and beans.'],['Você bebe café?','Do you drink coffee?'],['Ela abre a porta.','She opens the door.'],
+      ['O que você faz?','What do you do (for work)?'],['Eu faço exercício.','I exercise.'],['Faz calor hoje.','It\'s hot today.'],
+      ['Eu não entendo.','I don\'t understand.'],['A gente parte amanhã.','We leave tomorrow.']
+    ]
+  },
+  'Family & describing people': {
+    tip: 'Adjectives come after the noun and match its gender: um homem alt<b>o</b>, uma mulher alt<b>a</b>.',
+    items: [
+      ['a mãe / o pai','mother / father'],['o irmão / a irmã','brother / sister'],['o filho / a filha','son / daughter'],
+      ['o marido / a esposa','husband / wife'],['Eu tenho uma filha.','I have a daughter.'],['Ela é alta e simpática.','She\'s tall and nice.'],
+      ['Meu irmão é engraçado.','My brother is funny.'],['Minha família é grande.','My family is big.']
+    ]
+  },
+  'Days, months, time & dates': {
+    tip: 'Weekdays are numbered from Monday: segunda-feira (2nd), terça (3rd)… Brazilians usually drop "-feira" in speech.',
+    items: [
+      ['Que horas são?','What time is it?'],['São três horas.','It\'s three o\'clock.'],['É uma hora.','It\'s one o\'clock.'],
+      ['meio-dia','noon'],['segunda-feira','Monday'],['sábado e domingo','Saturday and Sunday'],
+      ['hoje / amanhã / ontem','today / tomorrow / yesterday'],['Que dia é hoje?','What day is it today?'],['em janeiro','in January']
+    ]
+  },
+  'Gender, articles & contractions': {
+    tip: '"the" = o / a / os / as. "a, an" = um / uma. Prepositions merge with "the": em + o = <b>no</b>, em + a = <b>na</b>, de + o = <b>do</b>, de + a = <b>da</b>.',
+    items: [
+      ['o livro / os livros','the book / the books'],['a casa / as casas','the house / the houses'],
+      ['um amigo / uma amiga','a friend (m / f)'],['no Brasil','in Brazil (em + o)'],['na praia','at the beach (em + a)'],
+      ['do Rio','from Rio (de + o)'],['da Bahia','from Bahia (de + a)'],['pela rua','along the street (por + a)']
+    ]
+  },
+  'Daily routine': {
+    tip: 'Use "às" + hour for "at": às sete = at seven. "Tomar café da manhã" = to have breakfast.',
+    items: [
+      ['Eu acordo às sete.','I wake up at seven.'],['Eu tomo banho.','I take a shower.'],['Eu tomo café da manhã.','I have breakfast.'],
+      ['Eu almoço ao meio-dia.','I have lunch at noon.'],['Eu volto pra casa.','I go back home.'],['Eu janto às oito.','I have dinner at eight.'],
+      ['Eu vou dormir tarde.','I go to bed late.']
+    ]
+  },
+  'Shopping, clothes & colors': {
+    tip: 'Sizes are P / M / G (pequeno, médio, grande). Pix is Brazil\'s instant bank payment, and almost everyone accepts it.',
+    items: [
+      ['Quanto custa essa camisa?','How much is this shirt?'],['Tem em outra cor?','Do you have it in another color?'],
+      ['Tem tamanho M?','Do you have size M?'],['Posso experimentar?','Can I try it on?'],['Vou levar.','I\'ll take it.'],
+      ['Só tô olhando, obrigado.','Just looking, thanks.'],['Aceita Pix?','Do you take Pix?'],
+      ['preto, branco, azul','black, white, blue'],['vermelho, verde, amarelo','red, green, yellow']
+    ]
+  },
+  'Likes, dislikes & free time': {
+    tip: '"Gostar" always takes <b>de</b>: Eu gosto <b>de</b> futebol. De + o = do: Eu gosto <b>do</b> Brasil.',
+    items: [
+      ['Eu gosto de futebol.','I like soccer.'],['Eu adoro música brasileira.','I love Brazilian music.'],
+      ['Eu não gosto de acordar cedo.','I don\'t like waking up early.'],['Eu prefiro a praia.','I prefer the beach.'],
+      ['O que você gosta de fazer?','What do you like to do?'],['Eu odeio trânsito.','I hate traffic.'],
+      ['No fim de semana eu descanso.','On the weekend I rest.']
+    ]
+  },
+  'Listening: slow Brazilian audio': {
+    tip: 'Use <b>Practice → Listening quiz</b> every day to train your ear on what you\'ve learned, then shadow a learner video from the Free resources list.',
+    items: []
+  },
+  'Speaking: first real conversations': {
+    tip: 'Warm up with <b>Practice → Conversations</b>, then talk to a real person on HelloTalk or Tandem, or ask an AI chatbot to role-play with you.',
+    dialogues: ['Meeting someone','Small talk about you','In a clothes shop'],
+    items: []
+  }
+};
+
+/* Role-play scenes. "them" lines are spoken by the app; on "you" lines you answer out loud. */
+const DIALOGUES = [
+  {title:'Meeting someone', lv:'survival', lines:[
+    ['them','Oi! Tudo bem?','Hi! How\'s it going?'],
+    ['you','Tudo bem, e você?','Good, and you?'],
+    ['them','Tudo ótimo! Como você se chama?','Great! What\'s your name?'],
+    ['you','Meu nome é … E você?','My name is … And you?'],
+    ['them','Eu sou a Carla. De onde você é?','I\'m Carla. Where are you from?'],
+    ['you','Eu sou dos Estados Unidos.','I\'m from the United States.'],
+    ['them','Que legal! Você fala português muito bem!','How cool! You speak Portuguese really well!'],
+    ['you','Obrigado! Tô aprendendo.','Thanks! I\'m learning.'],
+    ['them','Prazer!','Nice to meet you!'],
+    ['you','Prazer!','Nice to meet you!']
+  ]},
+  {title:'At the café', lv:'survival', lines:[
+    ['them','Oi, boa tarde! O que vai ser?','Hi, good afternoon! What will it be?'],
+    ['you','Boa tarde! Eu quero um café, por favor.','Good afternoon! I\'d like a coffee, please.'],
+    ['them','Mais alguma coisa?','Anything else?'],
+    ['you','Um pão de queijo também.','A cheese bread too.'],
+    ['them','Pra comer aqui ou pra viagem?','For here or to go?'],
+    ['you','Pra comer aqui.','For here.'],
+    ['them','Tá bom. Fica dezoito reais.','OK. That\'s eighteen reais.'],
+    ['you','Aceita cartão?','Do you take cards?'],
+    ['them','Aceito, sim.','Yes, I do.'],
+    ['you','Obrigado!','Thank you!']
+  ]},
+  {title:'Taking a taxi', lv:'survival', lines:[
+    ['them','Boa noite! Pra onde?','Good evening! Where to?'],
+    ['you','Boa noite! Pro hotel, por favor.','Good evening! To the hotel, please.'],
+    ['them','Tá bom. Primeira vez no Rio?','OK. First time in Rio?'],
+    ['you','Sim, é a minha primeira vez.','Yes, it\'s my first time.'],
+    ['them','Seja bem-vindo!','Welcome!'],
+    ['you','Obrigado! É longe?','Thanks! Is it far?'],
+    ['them','Não, uns quinze minutos.','No, about fifteen minutes.'],
+    ['you','Perfeito.','Perfect.']
+  ]},
+  {title:'Hotel check-in', lv:'survival', lines:[
+    ['them','Boa tarde, posso ajudar?','Good afternoon, can I help you?'],
+    ['you','Boa tarde! Eu tenho uma reserva.','Good afternoon! I have a reservation.'],
+    ['them','Qual é o seu nome?','What\'s your name?'],
+    ['you','Meu nome é …','My name is …'],
+    ['them','Tá aqui. Duas noites, né?','Here it is. Two nights, right?'],
+    ['you','Isso, duas noites.','That\'s right, two nights.'],
+    ['them','O café da manhã é das sete às dez.','Breakfast is from seven to ten.'],
+    ['you','Que horas é o check-out?','What time is check-out?'],
+    ['them','Ao meio-dia.','At noon.'],
+    ['you','Obrigado!','Thank you!']
+  ]},
+  {title:'Asking directions', lv:'survival', lines:[
+    ['you','Com licença, onde fica o metrô?','Excuse me, where\'s the subway?'],
+    ['them','Siga reto e vire à direita na esquina.','Go straight and turn right at the corner.'],
+    ['you','É longe?','Is it far?'],
+    ['them','Não, é bem perto. Uns cinco minutos.','No, it\'s really close. About five minutes.'],
+    ['you','Muito obrigado!','Thank you very much!'],
+    ['them','De nada!','You\'re welcome!']
+  ]},
+  {title:'In a clothes shop', lv:'a1', lines:[
+    ['them','Oi, posso ajudar?','Hi, can I help you?'],
+    ['you','Quanto custa essa camisa?','How much is this shirt?'],
+    ['them','Custa oitenta reais.','It\'s eighty reais.'],
+    ['you','Tem em azul?','Do you have it in blue?'],
+    ['them','Tem, sim. Qual é o seu tamanho?','Yes, we do. What\'s your size?'],
+    ['you','M, por favor. Posso experimentar?','M, please. Can I try it on?'],
+    ['them','Claro! O provador é ali.','Of course! The fitting room is over there.'],
+    ['you','Vou levar!','I\'ll take it!']
+  ]},
+  {title:'Small talk about you', lv:'a1', lines:[
+    ['them','O que você faz?','What do you do?'],
+    ['you','Eu trabalho com computadores.','I work with computers.'],
+    ['them','E o que você gosta de fazer no fim de semana?','And what do you like to do on the weekend?'],
+    ['you','Eu gosto de ir pra praia.','I like going to the beach.'],
+    ['them','Você tem família aqui?','Do you have family here?'],
+    ['you','Não, minha família mora nos Estados Unidos.','No, my family lives in the United States.'],
+    ['them','Quanto tempo você vai ficar no Brasil?','How long are you going to stay in Brazil?'],
+    ['you','Duas semanas.','Two weeks.']
+  ]}
+];
+
+</script>
+<script>
+/* Practice tools: audio, speaking checks, flashcards, listening quiz, conversations.
+   Uses globals from index.html (state, save, GOALS, plan helpers) at call time. */
+
+/* ---------- Audio (browser text-to-speech) ---------- */
+// Prefer natural-sounding female Brazilian voices (Edge's "Natural" voices sound close to a real person).
+const FEMALE_VOICE = /francisca|thalita|leticia|letícia|yara|brenda|elza|giovanna|leila|manuela|luciana|vit[oó]ria|camila|maria|google portugu[eê]s do brasil/i;
+const MALE_VOICE = /ant[oô]nio|daniel|donato|f[aá]bio|humberto|j[uú]lio|nicolau|val[eé]rio|felipe|macerio/i;
+const VOICE_KEY = 'ptplanner.voice';
+const Speech = {
+  voice: null,
+  ok: 'speechSynthesis' in window,
+  all(){ return this.ok ? speechSynthesis.getVoices().filter(v => /^pt/i.test(v.lang)) : []; },
+  rank(v){
+    let s = 0;
+    if (/^pt[-_]BR$/i.test(v.lang)) s += 100;
+    if (/natural|neural|online|enhanced|premium|aprimorad/i.test(v.name + ' ' + v.voiceURI)) s += 50;
+    if (FEMALE_VOICE.test(v.name)) s += 30;
+    if (MALE_VOICE.test(v.name)) s -= 40;
+    if (/francisca/i.test(v.name)) s += 5;
+    return s;
+  },
+  pick(){
+    const vs = this.all();
+    let saved = null; try { saved = localStorage.getItem(VOICE_KEY); } catch(e){}
+    this.voice = vs.find(v => v.name === saved) || vs.slice().sort((a, b) => this.rank(b) - this.rank(a))[0] || null;
+  },
+  choose(name){ this.voice = this.all().find(v => v.name === name) || this.voice; try { localStorage.setItem(VOICE_KEY, name); } catch(e){} },
+  isBrazilian(){ return !!this.voice && /BR$/i.test(this.voice.lang); },
+  isNatural(){ return !!this.voice && /natural|neural|online|enhanced|premium|aprimorad/i.test(this.voice.name + ' ' + this.voice.voiceURI); },
+  get slow(){ return this.isNatural() ? 0.75 : 0.65; },
+  say(text, rate, onend){
+    if (!this.ok) return;
+    speechSynthesis.cancel();
+    const u = new SpeechSynthesisUtterance(text.replace(/…/g, '').replace(/ \/ /g, '. '));
+    u.lang = 'pt-BR'; if (this.voice) u.voice = this.voice;
+    u.rate = rate ?? (this.isNatural() ? 1 : 0.95);
+    if (onend) u.onend = onend;
+    speechSynthesis.speak(u);
+  }
+};
+if (Speech.ok){
+  Speech.pick();
+  speechSynthesis.addEventListener('voiceschanged', () => { const had = !!Speech.voice; Speech.pick(); if (!had && Speech.voice && typeof render === 'function' && state?.plan && tab === 'practice') render(); });
+}
+const voiceLabel = v => v.name.replace(/^Microsoft\s+/, '').replace(/\s+Online/, '').replace(/\s*-\s*Portuguese.*$/, '').replace(/\s*\(Natural\)/, ' (natural)');
+
+/* ---------- Speaking check (browser speech recognition) ---------- */
+const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
+const normWords = s => s.toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g, '').replace(/[^a-z0-9 ]/g, ' ').split(/\s+/).filter(Boolean);
+function matchScore(target, heard){
+  const h = new Set(normWords(heard));
+  return Math.max(...target.split(' / ').map(t => {
+    const w = normWords(t.replace(/…/g, ''));
+    return w.length ? w.filter(x => h.has(x)).length / w.length : 1;
+  }));
+}
+function listenFor(target, done){
+  if (!SR) return done({error: 'unsupported'});
+  const r = new SR(); r.lang = 'pt-BR'; r.interimResults = false; r.maxAlternatives = 3;
+  let got = false;
+  r.onresult = e => {
+    got = true;
+    const best = [...e.results[0]].map(a => [a.transcript, matchScore(target, a.transcript)]).sort((a, b) => b[1] - a[1])[0];
+    done({heard: best[0], score: best[1]});
+  };
+  r.onerror = e => { got = true; done({error: e.error}); };
+  r.onend = () => { if (!got) done({error: 'no-speech'}); };
+  r.start();
+}
+function feedbackHTML(res){
+  if (res.error === 'unsupported') return `<span class="fb bad">Speaking checks need Chrome or Edge.</span>`;
+  if (res.error === 'not-allowed') return `<span class="fb bad">Microphone blocked. Allow it in the address bar and try again.</span>`;
+  if (res.error === 'network') return `<span class="fb bad">Speech checking needs an internet connection.</span>`;
+  if (res.error) return `<span class="fb bad">Didn't catch that. Tap the mic and try again.</span>`;
+  const pct = Math.round(res.score * 100);
+  const cls = pct >= 80 ? 'good' : pct >= 50 ? 'mid' : 'bad';
+  const msg = pct >= 80 ? 'Ótimo! That was clear.' : pct >= 50 ? 'Close. Listen again and repeat.' : 'Not quite. Play it slowly and copy it.';
+  return `<span class="fb ${cls}"><b>${msg}</b> Heard: "${res.heard}"</span>`;
+}
+
+/* ---------- Content helpers ---------- */
+const ITEM = {};  // pt -> {en, hint, goal}
+Object.entries(LESSONS).forEach(([goal, l]) => l.items.forEach(([pt, en, hint]) => { if (!ITEM[pt]) ITEM[pt] = {en, hint, goal}; }));
+
+function planGoalTitles(){
+  const seen = new Set(); const out = [];
+  state.plan.days.forEach(d => d.pieces.forEach(p => { const t = GOALS[p.gi].t; if (!seen.has(t)){ seen.add(t); out.push(t); } }));
+  return out;
+}
+function unlockedGoalTitles(){
+  // goals scheduled up to today, or that have a checked piece; at least the first two goals with lessons
+  const t = today(), out = new Set();
+  state.plan.days.forEach(d => d.pieces.forEach(p => { if (d.date <= t || state.checks[p.id]) out.add(GOALS[p.gi].t); }));
+  const withItems = [...out].filter(g => LESSONS[g]?.items.length);
+  if (withItems.length < 2) planGoalTitles().filter(g => LESSONS[g]?.items.length).slice(0, 2).forEach(g => out.add(g));
+  return [...out];
+}
+
+/* ---------- Flashcards (spaced repetition) ---------- */
+const MIN = 6e4, DAY = 864e5;
+function cards(){ return state.cards || (state.cards = {}); }
+function addGoalCards(title){
+  const l = LESSONS[title]; if (!l) return 0;
+  let n = 0; const now = Date.now();
+  l.items.forEach(([pt]) => { if (!cards()[pt]){ cards()[pt] = {due: now, ivl: 0, step: 0}; n++; } });
+  if (n) save();
+  return n;
+}
+function dueList(){ const now = Date.now(); return Object.entries(cards()).filter(([pt, c]) => c.due <= now && ITEM[pt]).sort((a, b) => a[1].due - b[1].due).map(([pt]) => pt); }
+function nextDueIn(){
+  const ds = Object.values(cards()).map(c => c.due).filter(d => d > Date.now());
+  if (!ds.length) return null;
+  const ms = Math.min(...ds) - Date.now();
+  return ms < 36e5 ? `${Math.max(1, Math.round(ms / MIN))} min` : ms < DAY ? `${Math.round(ms / 36e5)} hr` : `${Math.round(ms / DAY)} day(s)`;
+}
+function preview(c, r){
+  if (r === 'again') return '1 min';
+  if (c.ivl === 0){
+    if (r === 'easy') return '4 days';
+    if (r === 'good') return c.step >= 1 ? '1 day' : '10 min';
+    return '5 min';
+  }
+  const f = r === 'hard' ? 1.2 : r === 'good' ? 2.5 : 4;
+  return `${Math.max(1, Math.round(c.ivl * f))} days`;
+}
+function rate(pt, r){
+  const c = cards()[pt], now = Date.now();
+  if (r === 'again'){ c.step = 0; c.ivl = 0; c.due = now + MIN; }
+  else if (c.ivl === 0){
+    if (r === 'easy'){ c.ivl = 4; c.due = now + 4 * DAY; }
+    else if (r === 'good'){ if (c.step >= 1){ c.ivl = 1; c.due = now + DAY; } else { c.step = 1; c.due = now + 10 * MIN; } }
+    else c.due = now + 5 * MIN;
+  } else {
+    const f = r === 'hard' ? 1.2 : r === 'good' ? 2.5 : 4;
+    c.ivl = Math.max(1, Math.round(c.ivl * f)); c.due = now + c.ivl * DAY;
+  }
+  save();
+}
+
+/* ---------- Sheet (full-screen panel) ---------- */
+function openSheet(html){
+  let s = document.getElementById('sheet');
+  if (!s){
+    s = document.createElement('div'); s.id = 'sheet'; s.className = 'sheet';
+    s.innerHTML = `<div class="sheet-in" role="dialog" aria-modal="true"><button class="sheet-x" aria-label="Close">×</button><div id="sheet-body"></div></div>`;
+    document.body.appendChild(s);
+    s.querySelector('.sheet-x').addEventListener('click', closeSheet);
+    s.addEventListener('click', e => { if (e.target === s) closeSheet(); });
+    document.addEventListener('keydown', e => { if (e.key === 'Escape' && !s.hidden) closeSheet(); });
+  }
+  s.hidden = false; document.body.style.overflow = 'hidden';
+  document.getElementById('sheet-body').innerHTML = html;
+  s.querySelector('.sheet-in').scrollTop = 0;
+  return document.getElementById('sheet-body');
+}
+function closeSheet(){
+  const s = document.getElementById('sheet'); if (!s) return;
+  if (Speech.ok) speechSynthesis.cancel();
+  s.hidden = true; document.body.style.overflow = '';
+  const y = window.scrollY; render(); window.scrollTo(0, y);
+}
+
+const playBtns = (pt, i) => `<button class="ic" data-say="${i}" aria-label="Play">▶</button><button class="ic slow" data-slow="${i}" aria-label="Play slowly">slow</button>${SR ? `<button class="ic" data-mic="${i}" aria-label="Say it and check">🎤</button>` : ''}`;
+function bindPhraseButtons(root, phrases){
+  root.querySelectorAll('[data-say]').forEach(b => b.addEventListener('click', () => Speech.say(phrases[+b.dataset.say])));
+  root.querySelectorAll('[data-slow]').forEach(b => b.addEventListener('click', () => Speech.say(phrases[+b.dataset.slow], Speech.slow)));
+  root.querySelectorAll('[data-mic]').forEach(b => b.addEventListener('click', () => {
+    const i = +b.dataset.mic, out = root.querySelector(`[data-fb="${i}"]`);
+    b.classList.add('rec'); out.innerHTML = '<span class="fb">Listening… speak now</span>';
+    listenFor(phrases[i], res => { b.classList.remove('rec'); out.innerHTML = feedbackHTML(res); });
+  }));
+}
+
+function voiceNote(){
+  if (!Speech.ok) return `<p class="note">Your browser can't play audio. Use Chrome or Edge.</p>`;
+  if (Speech.voice && !Speech.isBrazilian()) return `<p class="note">No Brazilian voice found, so audio uses a European Portuguese voice. For a Brazilian one, use Chrome or Edge, or add "Portuguese (Brazil)" in Windows Settings → Time & language → Speech.</p>`;
+  if (!Speech.voice) return `<p class="note">No Portuguese voice found yet. If there's no audio, use Chrome or Edge, or add "Portuguese (Brazil)" in Windows Settings → Time & language → Speech.</p>`;
+  return '';
+}
+function voiceCardHTML(){
+  if (!Speech.ok) return '';
+  const vs = Speech.all().slice().sort((a, b) => Speech.rank(b) - Speech.rank(a));
+  const cur = Speech.voice;
+  const tip = cur && Speech.isNatural() && FEMALE_VOICE.test(cur.name)
+    ? `You're using <b>${voiceLabel(cur)}</b>, a natural-sounding Brazilian voice.`
+    : /iPhone|iPad|iPod/.test(navigator.userAgent)
+      ? `For a more real-sounding female voice, on your iPhone open <b>Settings → Accessibility → Spoken Content → Voices → Portuguese (Brazil)</b>, download <b>Luciana (Enhanced)</b> or <b>(Premium)</b>, then reopen this app and pick it here.`
+      : /Android/.test(navigator.userAgent)
+      ? `For a more real-sounding voice, install <b>Speech Services by Google</b> and download its Portuguese (Brazil) voice in your phone's text-to-speech settings.`
+      : `For the most real-sounding female voice, open this app in <b>Microsoft Edge</b> and pick <b>Francisca (natural)</b> or <b>Thalita (natural)</b>.`;
+  return `<div class="card"><div class="eyebrow">Voice</div>
+    <p class="muted small" style="margin-top:6px">${tip}</p>
+    ${vs.length ? `<div class="voice-row"><select id="voice-sel" aria-label="Voice">${vs.map(v => `<option value="${v.name}" ${cur && v.name === cur.name ? 'selected' : ''}>${voiceLabel(v)} · ${/BR$/i.test(v.lang) ? 'Brazil' : 'Portugal'}</option>`).join('')}</select>
+      <button class="ic" id="voice-test">▶ Test</button></div>` : ''}
+  </div>`;
+}
+function bindVoiceCard(root){
+  const sel = root.querySelector('#voice-sel');
+  sel?.addEventListener('change', () => { Speech.choose(sel.value); Speech.say('Oi! Tudo bem? Eu vou te ajudar a aprender português.'); render(); });
+  root.querySelector('#voice-test')?.addEventListener('click', () => Speech.say('Oi! Tudo bem? Eu vou te ajudar a aprender português.'));
+}
+
+/* ---------- Lesson ---------- */
+function openLesson(title){
+  const g = GOALS.find(x => x.t === title), l = LESSONS[title];
+  const added = addGoalCards(title);
+  const phrases = l.items.map(x => x[0]);
+  const body = openSheet(`
+    <div class="eyebrow">Lesson</div><h2>${title}</h2>
+    <p class="muted">${g ? g.d : ''}</p>
+    ${voiceNote()}
+    <div class="tipbox">${l.tip}</div>
+    ${l.items.length ? `<p class="small muted">Tap ▶ to hear it, then say it out loud. ${SR ? 'Tap 🎤 to check your pronunciation.' : ''}</p>
+    <ul class="phrases">${l.items.map(([pt, en, hint], i) => `<li>
+      <div class="ph-main"><div><div class="ph-pt" lang="pt-BR">${pt}</div><div class="ph-en">${en}${hint ? ` <span class="hint">· ${hint}</span>` : ''}</div></div>
+      <div class="ph-btns">${playBtns(pt, i)}</div></div><div data-fb="${i}"></div></li>`).join('')}</ul>
+    <p class="small muted">${added ? `Added ${added} new phrase${added > 1 ? 's' : ''} to your flashcards.` : 'These phrases are in your flashcards.'}</p>` : ''}
+    <div class="sheet-actions">
+      ${l.items.length ? `<button class="btn" data-go="flash">Review flashcards</button>` : ''}
+      ${(l.dialogues || []).map(t => `<button class="btn ghost" data-dialogue="${t}">Practice: ${t}</button>`).join('')}
+      ${title.startsWith('Listening') ? `<button class="btn" data-go="quiz">Start listening quiz</button>` : ''}
+    </div>`);
+  bindPhraseButtons(body, phrases);
+  bindSheetNav(body);
+}
+function bindSheetNav(root){
+  root.querySelectorAll('[data-go="flash"]').forEach(b => b.addEventListener('click', openFlashcards));
+  root.querySelectorAll('[data-go="quiz"]').forEach(b => b.addEventListener('click', openQuiz));
+  root.querySelectorAll('[data-dialogue]').forEach(b => b.addEventListener('click', () => openDialogue(b.dataset.dialogue)));
+}
+
+/* ---------- Flashcard session ---------- */
+function openFlashcards(){
+  if (!Object.keys(cards()).length) unlockedGoalTitles().forEach(addGoalCards);
+  const due = dueList();
+  if (!due.length){
+    const nx = nextDueIn();
+    const body = openSheet(`<div class="eyebrow">Flashcards</div><h2>All caught up 🎉</h2>
+      <p>${nx ? `Your next card is due in ${nx}.` : 'Open a lesson to add phrases.'} Reviewing at the right moment is what makes words stick.</p>
+      <div class="sheet-actions"><button class="btn" data-go="quiz">Try the listening quiz</button></div>`);
+    bindSheetNav(body); return;
+  }
+  const pt = due[0], it = ITEM[pt], c = cards()[pt];
+  const body = openSheet(`<div class="eyebrow">Flashcards · ${due.length} due</div>
+    <div class="fc">
+      <p class="small muted">Say it in Portuguese, out loud, before you reveal.</p>
+      <div class="fc-q">${it.en}</div>
+      <div id="fc-a" hidden>
+        <div class="fc-pt" lang="pt-BR">${pt}</div>${it.hint ? `<div class="hint">${it.hint}</div>` : ''}
+        <div class="ph-btns" style="justify-content:center;margin-top:8px">${playBtns(pt, 0)}</div><div data-fb="0"></div>
+        <p class="small muted" style="margin-top:14px">How well did you remember it?</p>
+        <div class="rates">${['again', 'hard', 'good', 'easy'].map(r => `<button class="rate r-${r}" data-rate="${r}"><b>${r[0].toUpperCase() + r.slice(1)}</b><span>${preview(c, r)}</span></button>`).join('')}</div>
+      </div>
+      <button class="btn full" id="fc-show">Reveal answer</button>
+    </div>`);
+  bindPhraseButtons(body, [pt]);
+  body.querySelector('#fc-show').addEventListener('click', e => { e.target.remove(); body.querySelector('#fc-a').hidden = false; Speech.say(pt); });
+  body.querySelectorAll('[data-rate]').forEach(b => b.addEventListener('click', () => { rate(pt, b.dataset.rate); openFlashcards(); }));
+}
+
+/* ---------- Listening quiz ---------- */
+function openQuiz(){
+  const pool = [...new Set(unlockedGoalTitles().flatMap(g => (LESSONS[g]?.items || []).map(x => x[0])))];
+  if (pool.length < 4){ openSheet(`<h2>Listening quiz</h2><p>Open a lesson first so there's something to quiz you on.</p>`); return; }
+  const qs = pool.sort(() => Math.random() - .5).slice(0, Math.min(10, pool.length));
+  let i = 0, right = 0;
+  const show = () => {
+    if (i >= qs.length){
+      const body = openSheet(`<div class="eyebrow">Listening quiz</div><h2>${right} / ${qs.length}</h2>
+        <p>${right / qs.length >= .8 ? 'Excellent ear! 🎧' : right / qs.length >= .5 ? 'Good progress. Play the ones you missed in their lessons.' : 'Keep going. Replay the lessons and shadow each phrase.'}</p>
+        <div class="sheet-actions"><button class="btn" id="again">Another round</button><button class="btn ghost" data-go="flash">Flashcards</button></div>`);
+      body.querySelector('#again').addEventListener('click', openQuiz); bindSheetNav(body); return;
+    }
+    const pt = qs[i], en = ITEM[pt].en;
+    const opts = [en, ...pool.filter(p => p !== pt).map(p => ITEM[p].en).filter((e, k, a) => e !== en && a.indexOf(e) === k).sort(() => Math.random() - .5).slice(0, 3)].sort(() => Math.random() - .5);
+    const body = openSheet(`<div class="eyebrow">Listening quiz · ${i + 1} of ${qs.length}</div>
+      ${voiceNote()}
+      <div class="fc"><p class="small muted">Listen, then pick what it means.</p>
+        <div class="ph-btns" style="justify-content:center;margin:8px 0 16px"><button class="ic big" id="q-play" aria-label="Play">▶</button><button class="ic slow" id="q-slow">slow</button></div>
+        <div class="opts">${opts.map((o, k) => `<button class="opt" data-k="${k}">${o}</button>`).join('')}</div>
+        <div id="q-res"></div></div>`);
+    const play = r => Speech.say(pt, r);
+    body.querySelector('#q-play').addEventListener('click', () => play());
+    body.querySelector('#q-slow').addEventListener('click', () => play(Speech.slow));
+    setTimeout(() => play(), 250);
+    body.querySelectorAll('.opt').forEach(b => b.addEventListener('click', () => {
+      const ok = opts[+b.dataset.k] === en; if (ok) right++;
+      body.querySelectorAll('.opt').forEach(x => { x.disabled = true; if (opts[+x.dataset.k] === en) x.classList.add('correct'); });
+      if (!ok) b.classList.add('wrong');
+      body.querySelector('#q-res').innerHTML = `<div class="tipbox" style="margin-top:14px"><div class="fc-pt" lang="pt-BR" style="font-size:22px">${pt}</div>${ok ? 'Correct!' : `It means: <b>${en}</b>`}</div>
+        <button class="btn full" id="q-next">${i + 1 < qs.length ? 'Next' : 'See score'}</button>`;
+      body.querySelector('#q-next').addEventListener('click', () => { i++; show(); });
+    }));
+  };
+  show();
+}
+
+/* ---------- Conversations ---------- */
+function openDialogue(title){
+  const d = DIALOGUES.find(x => x.title === title); if (!d) return;
+  let i = 0;
+  const body = openSheet(`<div class="eyebrow">Conversation</div><h2>${d.title}</h2>
+    <p class="small muted">The app plays the other person. When it's your turn, say the Portuguese out loud${SR ? ' (tap 🎤 to check it)' : ''}, then reveal the answer.</p>
+    ${voiceNote()}
+    <div class="chat" id="chat"></div><div id="turn"></div>`);
+  const chat = body.querySelector('#chat'), turn = body.querySelector('#turn');
+  const bubble = (who, pt, en) => {
+    const el = document.createElement('div'); el.className = 'bubble ' + who;
+    el.innerHTML = `<div lang="pt-BR">${pt}</div><div class="en">${en}</div>`;
+    el.addEventListener('click', () => Speech.say(pt));
+    chat.appendChild(el); el.scrollIntoView({block: 'nearest'});
+  };
+  const step = () => {
+    if (i >= d.lines.length){
+      turn.innerHTML = `<div class="tipbox">Parabéns! Run it again until you can say every line without revealing. Tap any bubble to hear it.</div>
+        <div class="sheet-actions"><button class="btn" id="d-again">Run it again</button></div>`;
+      turn.querySelector('#d-again').addEventListener('click', () => openDialogue(title)); return;
+    }
+    const [who, pt, en] = d.lines[i];
+    if (who === 'them'){
+      bubble('them', pt, en); i++;
+      turn.innerHTML = `<div class="sheet-actions"><button class="ic" id="d-rep">▶ Replay</button><button class="ic slow" id="d-slow">slow</button><button class="btn" id="d-next">Continue</button></div>`;
+      turn.querySelector('#d-rep').addEventListener('click', () => Speech.say(pt));
+      turn.querySelector('#d-slow').addEventListener('click', () => Speech.say(pt, Speech.slow));
+      turn.querySelector('#d-next').addEventListener('click', step);
+      Speech.say(pt);
+    } else {
+      turn.innerHTML = `<div class="yourturn"><div class="small muted">Your turn. Say in Portuguese:</div><div class="yt-en">${en}</div>
+        <div data-fb="0"></div>
+        <div class="sheet-actions">${SR ? `<button class="ic" data-mic="0">🎤 Answer</button>` : ''}<button class="btn" id="d-show">Reveal answer</button></div></div>`;
+      bindPhraseButtons(turn, [pt]);
+      turn.querySelector('#d-show').addEventListener('click', () => { bubble('you', pt, en); Speech.say(pt); i++; step(); });
+    }
+  };
+  step();
+}
+
+/* ---------- Practice tab ---------- */
+function practiceHTML(){
+  const titles = planGoalTitles().filter(t => LESSONS[t]);
+  const unlocked = new Set(unlockedGoalTitles());
+  const nCards = Object.keys(cards()).length, nDue = dueList().length;
+  const lvlMax = LV[state.plan.level].i;
+  const dl = DIALOGUES.filter(x => LV[x.lv].i <= Math.max(lvlMax, 1));
+  const missing = planGoalTitles().length - titles.length;
+  return `
+    ${voiceNote()}
+    ${voiceCardHTML()}
+    <div class="card"><div class="eyebrow">Flashcards</div>
+      <h2 style="margin-top:4px">${nDue} due now</h2>
+      <p class="muted small">${nCards} phrases in your deck. They come back just before you'd forget them. Say each answer out loud before revealing it.</p>
+      <button class="btn" data-go="flash">${nDue ? 'Review now' : 'Open flashcards'}</button></div>
+    <div class="card"><div class="eyebrow">Listening quiz</div>
+      <p class="muted small" style="margin-top:6px">Hear a phrase from your lessons so far and pick what it means. Ten questions, about 3 minutes.</p>
+      <button class="btn" data-go="quiz">Start quiz</button></div>
+    <div class="card"><div class="eyebrow">Conversations</div>
+      <p class="muted small" style="margin-top:6px">Role-play real situations. The app speaks one side and you answer out loud.</p>
+      <div class="list">${dl.map(x => `<button class="row-btn" data-dialogue="${x.title}"><span>${x.title}</span><span class="pill">${LV[x.lv].cefr}</span></button>`).join('')}</div></div>
+    <div class="card"><div class="eyebrow">Lessons</div>
+      <p class="muted small" style="margin-top:6px">Every goal in your plan that has a lesson. Upcoming ones are marked.</p>
+      <div class="list">${titles.map(t => `<button class="row-btn" data-lesson-title="${t}"><span>${t}</span>${unlocked.has(t) ? '' : '<span class="pill">upcoming</span>'}</button>`).join('')}</div>
+      ${missing > 0 ? `<p class="small muted" style="margin-top:10px">${missing} later goals (A2 and up) don't have built-in lessons yet. Use the Free resources for those.</p>` : ''}</div>`;
+}
+function bindPractice(root){
+  bindSheetNav(root);
+  bindVoiceCard(root);
+  root.querySelectorAll('[data-lesson-title]').forEach(b => b.addEventListener('click', () => openLesson(b.dataset.lessonTitle)));
+}
+
+</script>
+<script>
+/* ---------- Data ---------- */
+const LEVELS = [
+  {key:'survival', name:'Survival basics', cefr:'A1−', hours:15, blurb:'Greetings, numbers, ordering food, directions.', final:'Survive a 3-minute role-play: greet, order, pay, and ask for directions — no English.'},
+  {key:'a1', name:'Beginner', cefr:'A1', hours:80, blurb:'Simple conversations about yourself and daily life.', final:'Hold a 5-minute conversation about yourself, your family and your day.'},
+  {key:'a2', name:'Elementary', cefr:'A2', hours:180, blurb:'Travel, shopping and small talk on your own.', final:'Handle a full travel day (check-in, food, a problem) and tell a story in the past.'},
+  {key:'b1', name:'Intermediate', cefr:'B1', hours:375, blurb:'Real conversations; follow most everyday speech.', final:'Talk for 20 minutes with a native speaker and follow a podcast at natural speed.'},
+  {key:'b2', name:'Upper-intermediate', cefr:'B2', hours:575, blurb:'Speak comfortably with natives on most topics.', final:'Hold a 45-minute conversation on unfamiliar topics and watch a Brazilian series without English subtitles.'}
+];
+const LV = Object.fromEntries(LEVELS.map((l,i)=>[l.key,{...l,i}]));
+
+const GOALS = [
+  // Survival basics — 15 hrs
+  {lv:'survival',h:2,t:'Sounds of Brazilian Portuguese',d:'Nasal "ão" (say "song", hold the "ong" and glide to "oo"); final -e sounds like "ee" and final -o like "oo" (leite = "lay-chee"); "de/te" = "djee/chee"; "r" at the start of a word = an h-sound (Rio = "Hee-oo").'},
+  {lv:'survival',h:1.5,t:'The 100 most common words',d:'The top 100 words make up roughly half of everything you’ll hear. Learn them as short phrases (eu quero, não sei, tem…?), not single words.'},
+  {lv:'survival',h:1,t:'Cognate shortcut: words you already know',d:'-tion → -ção (station → estação), -ty → -dade (city → cidade), -ly → -mente (really → realmente), -ble → -vel (possible → possível). Watch false friends: puxar = pull, pretender = intend, esquisito = weird.'},
+  {lv:'survival',h:1,t:'Greetings & goodbyes',d:'Oi, Tudo bem? / Tudo bom?, Bom dia / Boa tarde / Boa noite, Tchau, Até logo.'},
+  {lv:'survival',h:1,t:'Introduce yourself',d:'Meu nome é…, Eu sou de…, Prazer!, E você?',check:'Introduce yourself (name, where you’re from) out loud with no notes.'},
+  {lv:'survival',h:1,t:'Polite lifesavers',d:'Por favor, obrigado/obrigada, desculpa, com licença, não entendi, pode repetir?, fala mais devagar?'},
+  {lv:'survival',h:1,t:'How Brazilians really talk',d:'You’ll hear these constantly: tá/tô (está/estou), pra/pro (para), cê (você), né? (right?), and "a gente" for "we" — it takes the ele/ela verb form: a gente vai.'},
+  {lv:'survival',h:1.5,t:'Numbers 0–100 & prices',d:'Count to 100 and ask "Quanto custa?" — understand the answer.'},
+  {lv:'survival',h:1.5,t:'Ordering food & drinks',d:'Eu quero…, Pode me trazer…?, A conta, por favor. Learn 20 food & drink words.',check:'Order a drink and a meal out loud, then ask for the check.'},
+  {lv:'survival',h:1.5,t:'Directions & places',d:'Onde fica…?, banheiro, metrô, ônibus, esquerda, direita, em frente.'},
+  {lv:'survival',h:1,t:'The six question words',d:'O quê?, Onde?, Quando?, Quanto?, Quem?, Como?'},
+  {lv:'survival',h:1,t:'Survival role-play',d:'Act out a café, a taxi/Uber ride and a hotel check-in — with a partner, an AI chatbot, or alone out loud.',check:'Get through a 2-minute café role-play without switching to English.'},
+  // A1 — +65 hrs
+  {lv:'a1',h:5,t:'Pronouns + the verb "ser"',d:'eu, você, ele/ela, a gente, nós, vocês, eles. Eu sou, você é, a gente é (spoken "we"), nós somos…'},
+  {lv:'a1',h:5,t:'"Estar" vs "ser"',d:'Location, feelings and temporary states: Estou cansado. Onde você está?'},
+  {lv:'a1',h:5,t:'"Ter" and "ir" + the easy future',d:'Eu tenho…, Eu vou… and "vou + verb" (Vou comer) to talk about plans.'},
+  {lv:'a1',h:5,t:'Regular -ar verbs (present)',d:'falar, morar, trabalhar, gostar de, estudar — conjugate and use in sentences.'},
+  {lv:'a1',h:5,t:'Regular -er/-ir verbs + "fazer"',d:'comer, beber, abrir, partir, fazer — present tense.'},
+  {lv:'a1',h:5,t:'Family & describing people',d:'Family words, adjectives (alto, simpático, engraçado). Push your vocabulary to ~300 words.',check:'Describe your family for 1 minute without notes.'},
+  {lv:'a1',h:5,t:'Days, months, time & dates',d:'Que horas são?, segunda-feira, em janeiro, hoje / amanhã / ontem.'},
+  {lv:'a1',h:5,t:'Gender, articles & contractions',d:'o/a/os/as, plurals, and no, na, do, da, pelo, pela.'},
+  {lv:'a1',h:5,t:'Daily routine',d:'acordar, tomar banho, almoçar, dormir — describe a normal day; "me chamo".'},
+  {lv:'a1',h:5,t:'Shopping, clothes & colors',d:'Sizes (P/M/G), colors, "Tem em outra cor?", paying with card or Pix.'},
+  {lv:'a1',h:5,t:'Likes, dislikes & free time',d:'gostar de, adorar, preferir, odiar — talk about hobbies, music, futebol.'},
+  {lv:'a1',h:5,t:'Listening: slow Brazilian audio',d:'Learner podcasts/videos you mostly understand. Shadow them: replay a sentence and repeat it out loud in sync, copying the rhythm.'},
+  {lv:'a1',h:5,t:'Speaking: first real conversations',d:'Two or three short sessions with a language partner or tutor about yourself.',check:'Hold a 5-minute basic conversation about yourself.'},
+  // A2 — +100 hrs
+  {lv:'a2',h:8,t:'Past tense: regular verbs',d:'Pretérito perfeito — falei, comi, abri. Talk about yesterday.'},
+  {lv:'a2',h:8,t:'Past tense: the big irregulars',d:'fui, tive, fiz, estive, pude, quis, disse.'},
+  {lv:'a2',h:8,t:'The imperfect',d:'era, tinha, costumava — describe how things used to be.'},
+  {lv:'a2',h:8,t:'Travel Portuguese',d:'Airport, hotel, bookings, delays, lost bags and complaining politely.',check:'Book a hotel room and solve a problem with it, out loud.'},
+  {lv:'a2',h:7,t:'Health & the pharmacy',d:'Body parts, symptoms, "Estou com dor de…", at the doctor and the farmácia.'},
+  {lv:'a2',h:7,t:'Work & studies',d:'Explain your job and what you do day to day.'},
+  {lv:'a2',h:7,t:'Object pronouns the Brazilian way',d:'te, me, lhe, and spoken "Eu vi ele" vs written "Eu o vi".'},
+  {lv:'a2',h:7,t:'Comparing things',d:'mais… do que, menos… do que, melhor, pior, o maior.'},
+  {lv:'a2',h:6,t:'WhatsApp Portuguese',d:'vc, tb, blz, pq, kkkk — read and write casual texts.'},
+  {lv:'a2',h:10,t:'Listening: Brazilian YouTube',d:'Videos with Portuguese subtitles; write down 10 new phrases each session.'},
+  {lv:'a2',h:8,t:'Weather, regions & culture',d:'Seasons, Brazilian regions, festas (Carnaval, Festa Junina), food by region.'},
+  {lv:'a2',h:7,t:'Plans & invitations',d:'Bora…?, Quer ir…?, accepting, declining and rescheduling.'},
+  {lv:'a2',h:9,t:'Speaking: 15-minute exchanges',d:'Regular conversation exchanges (HelloTalk/Tandem) — tell stories in the past.',check:'Tell a 2-minute story about last weekend in the past tense.'},
+  // B1 — +195 hrs
+  {lv:'b1',h:15,t:'Present subjunctive',d:'Espero que, quero que, é importante que — form and use it.'},
+  {lv:'b1',h:10,t:'Commands as Brazilians say them',d:'Fala!, Me ajuda, Vem cá — the real-life imperative.'},
+  {lv:'b1',h:15,t:'Future & conditional',d:'farei / vou fazer, faria, seria — "If I could, I would…".'},
+  {lv:'b1',h:15,t:'Opinions & arguments',d:'Acho que, na minha opinião, concordo/discordo, por outro lado.',check:'Give and defend an opinion for 3 minutes.'},
+  {lv:'b1',h:15,t:'News in simple Portuguese',d:'Read and listen to short news pieces; summarize each one out loud.'},
+  {lv:'b1',h:15,t:'Colloquial speech',d:'tá, pra, né, cê, tô and slang: legal, massa, beleza, mano.'},
+  {lv:'b1',h:10,t:'"Por" vs "para" & tricky prepositions',d:'The prepositions English speakers mix up most.'},
+  {lv:'b1',h:10,t:'Duration & "tenho feito"',d:'Faz dois anos que…, há…, tenho estudado.'},
+  {lv:'b1',h:20,t:'Reading: graded readers & short stories',d:'Read a few pages daily; look up only what blocks the meaning.'},
+  {lv:'b1',h:20,t:'Listening at natural speed',d:'Native podcasts and YouTube with no subtitles; replay hard bits.',check:'Follow a 10-minute native podcast and summarize it out loud.'},
+  {lv:'b1',h:15,t:'Writing messages & short texts',d:'Emails, messages and short paragraphs — get them corrected.'},
+  {lv:'b1',h:25,t:'Conversation: 30-minute sessions',d:'Longer talks with tutors and partners on everyday topics.'},
+  {lv:'b1',h:10,t:'Vocabulary push to ~2,000 words',d:'Keep working down a frequency list. Make cards from real sentences you heard (sentence mining), not single words.'},
+  // B2 — +200 hrs
+  {lv:'b2',h:20,t:'Imperfect subjunctive & hypotheticals',d:'Se eu tivesse…, Se fosse você… — unreal situations.'},
+  {lv:'b2',h:15,t:'Future subjunctive',d:'Quando eu for…, Se você puder… — very common in Brazil.'},
+  {lv:'b2',h:10,t:'Personal infinitive',d:'Para eles fazerem, antes de vocês saírem.'},
+  {lv:'b2',h:20,t:'Debate & nuance',d:'Connectors: embora, apesar de, portanto, no entanto.',check:'Debate a topic for 10 minutes using at least 5 connectors.'},
+  {lv:'b2',h:25,t:'Brazilian TV without English subtitles',d:'Series, novelas and films with Portuguese subtitles or none.'},
+  {lv:'b2',h:15,t:'Regional accents',d:'Carioca, paulista, nordestino, mineiro, gaúcho — hear the difference.'},
+  {lv:'b2',h:15,t:'Idioms & expressions',d:'pisar na bola, dar um jeito, encher linguiça, cair a ficha.'},
+  {lv:'b2',h:15,t:'Formal Portuguese',d:'Work meetings, presentations, formal emails.'},
+  {lv:'b2',h:20,t:'Long-form reading',d:'Articles, essays and nonfiction in Portuguese.'},
+  {lv:'b2',h:15,t:'Writing opinion pieces',d:'Short essays corrected by a tutor or native speaker.'},
+  {lv:'b2',h:30,t:'Long conversations',d:'45–60 minute sessions on unfamiliar topics.',check:'Talk with a native speaker for 30 minutes on a topic you didn\'t prepare.'}
+];
+
+const SPLITS = { // listening, speaking, vocab, grammar, review (%)
+  survival:[20,30,30,10,10], a1:[20,25,25,20,10], a2:[25,25,20,20,10], b1:[30,30,15,15,10], b2:[30,35,10,15,10]
+};
+const BLOCKS = [['Listening','--c-listen'],['Speaking','--c-speak'],['Vocabulary','--c-vocab'],['Grammar','--c-gram'],['Review','--c-review']];
+
+const PHRASES = [
+  ['Tudo bem?','How\'s it going?'],['Tudo joia!','All great!'],['Prazer em te conhecer.','Nice to meet you.'],
+  ['Pode falar mais devagar, por favor?','Can you speak more slowly, please?'],['Não entendi.','I didn\'t understand.'],
+  ['Quanto custa?','How much is it?'],['A conta, por favor.','The check, please.'],['Onde fica o banheiro?','Where\'s the bathroom?'],
+  ['Tô aprendendo português.','I\'m learning Portuguese.'],['Com licença.','Excuse me.'],['Que legal!','How cool!'],
+  ['Beleza!','Cool! / Sounds good!'],['Valeu!','Thanks! (casual)'],['Sem problema.','No problem.'],['Vamos nessa!','Let\'s do it!'],
+  ['Fica à vontade.','Make yourself at home.'],['Até mais!','See you later!'],['Que saudade!','I\'ve missed this / you so much!'],
+  ['Eu adoro comida brasileira.','I love Brazilian food.'],['Tô com fome.','I\'m hungry.'],['Tá calor hoje, né?','It\'s hot today, isn\'t it?'],
+  ['Pode me ajudar?','Can you help me?'],['Como se diz … em português?','How do you say … in Portuguese?'],
+  ['O que significa isso?','What does this mean?'],['Bom fim de semana!','Have a good weekend!'],['Fala sério!','No way! / Come on!'],
+  ['Deu certo!','It worked out!'],['Calma!','Easy! / Calm down!'],['Boa sorte!','Good luck!'],['Bora!','Let\'s go!']
+];
+
+const RESOURCES = [
+  ['Listening',['<b>Speaking Brazilian</b> (YouTube + <a href="https://www.speakingbrazilian.com/100-most-used-words/" target="_blank" rel="noopener">site</a>) — real Brazilian pronunciation, plus a list of the 100 most used words','<b>Portuguese With Leo</b> (YouTube) — beginner-friendly lessons and dialogues','<a href="https://50languages.com/portuguese-br-for-free" target="_blank" rel="noopener">50Languages</a> — 100 free beginner audio lessons recorded by a native Brazilian','<b>Café Brasil</b> podcast — native-speed listening once you reach B1']],
+  ['Speaking',['<a href="https://www.hellotalk.com" target="_blank" rel="noopener">HelloTalk</a> or <b>Tandem</b> — free language exchange with Brazilians','An AI chatbot (Claude, ChatGPT, etc.) — ask it to role-play a waiter or taxi driver "in simple Brazilian Portuguese, and correct my mistakes at the end"','<a href="https://forvo.com" target="_blank" rel="noopener">Forvo</a> — hear native speakers say any word']],
+  ['Vocabulary',['<a href="https://apps.ankiweb.net" target="_blank" rel="noopener">Anki</a> — free flashcards with spaced repetition (desktop, web & Android)','<a href="https://www.duolingo.com" target="_blank" rel="noopener">Duolingo</a> — its Portuguese course is Brazilian Portuguese']],
+  ['Grammar & drills',['<a href="https://www.fsi-language-courses.org/fsi-brazilian-portuguese-fast-course/" target="_blank" rel="noopener">FSI Brazilian Portuguese</a> — the US diplomats\' course, now free and public domain, with lots of audio drills','<a href="https://www.wordreference.com/conj/ptverbs.aspx" target="_blank" rel="noopener">WordReference</a> — verb conjugator plus a dictionary with forums']],
+  ['Review',['Review your Anki cards every day, even on rest days (10–15 min)','Rewatch a video from earlier in the week — notice how much more you catch']]
+];
+
+// What actually works fastest — from research and from experienced learners (see the Method card)
+const METHOD = [
+  ['Listen to things you mostly understand','Comprehensible input: audio a little above your level has the strongest research support of any method. Don\'t sit through native TV you can\'t follow yet.'],
+  ['Speak from day one','Don\'t wait until you feel "ready". A clumsy 10-minute conversation teaches you more than a week of silent study. Talk to yourself, an AI, or a partner.'],
+  ['Shadow native audio','Replay a short sentence and repeat it out loud in sync. In a 2025 research review, 10 of 11 studies found shadowing improved pronunciation and fluency.'],
+  ['Most common words first','The top 100 words make up roughly half of what you hear, and about 1,000 words cover most everyday conversation. Learn those before anything rare.'],
+  ['Steal from English','Thousands of Portuguese words are cognates: -tion → -ção, -ty → -dade, -ly → -mente. You start out knowing more than you think.'],
+  ['Learn spoken Brazilian, not textbook Portuguese','Real conversations use tá, tô, pra, cê, né and "a gente". Learn them early or you won\'t understand people even when you know the "right" words.'],
+  ['Flashcards for keeping, not first learning','Spaced repetition is the best way to stop forgetting, but meet a word in real audio or text first. Make cards from whole sentences, not single words.'],
+  ['Test yourself, don\'t re-read','Active recall: cover the answer and say it before you check. Re-reading feels productive but sticks far less.'],
+  ['Short, focused sessions','Study in 45–60 minute blocks with real breaks. On long days your memory needs the rest more than more hours.']
+];
+const BLOCK_HOW = {
+  Listening:'Listen to audio you mostly understand. Shadow 3–5 sentences out loud.',
+  Speaking:'Talk out loud from the first minute — to yourself, an AI chatbot role-play, or a partner. Use today\'s phrases.',
+  Vocabulary:'Most common words first, learned inside short phrases. Add sentences you heard today to Anki.',
+  Grammar:'Learn the pattern, then make 5 sentences of your own about your life and say them out loud.',
+  Review:'Cover the answers and recall out loud (active recall), then do your Anki reviews.'
+};
+
+/* ---------- Helpers ---------- */
+const STORE = 'ptplanner.v1';
+const $ = s => document.querySelector(s);
+const pad = n => String(n).padStart(2,'0');
+const toStr = d => `${d.getFullYear()}-${pad(d.getMonth()+1)}-${pad(d.getDate())}`;
+const parse = s => { const [y,m,d] = s.split('-').map(Number); return new Date(y,m-1,d,12); };
+const addDays = (s,n) => { const d = parse(s); d.setDate(d.getDate()+n); return toStr(d); };
+const today = () => toStr(new Date());
+const diffDays = (a,b) => Math.round((parse(b)-parse(a))/864e5);
+const niceDate = s => parse(s).toLocaleDateString(undefined,{weekday:'short',month:'short',day:'numeric'});
+const isOff = (i,off) => off>0 && (i%7) >= 7-off;
+const studyDaysIn = (n,off) => { let c=0; for(let i=0;i<n;i++) if(!isOff(i,off)) c++; return c; };
+const calDaysFor = (study,off) => { let c=0,i=0; while(c<study){ if(!isOff(i,off)) c++; i++; } return i; };
+const fmtH = h => { const m = Math.round(h*60/5)*5; const hh = Math.floor(m/60), mm = m%60; return hh ? (mm ? `${hh}h ${mm}m` : `${hh}h`) : `${mm}m`; };
+const fmtNum = h => (Math.round(h*10)/10).toString();
+
+function load(){ try { return JSON.parse(localStorage.getItem(STORE)) || null; } catch(e){ return null; } }
+function save(){ try { localStorage.setItem(STORE, JSON.stringify(state)); } catch(e){} }
+
+let state = load();          // {plan, checks}
+let form = {level:'survival', mode:'days', days:2, start:today(), end:addDays(today(),1), hours:'', off:0};
+let openWeeks = new Set();
+let tab = 'plan';
+
+/* ---------- Planning ---------- */
+function assess(f){
+  const lvl = LV[f.level];
+  const n = f.mode==='days' ? Math.max(0, Math.floor(+f.days||0)) : Math.max(0, diffDays(f.start,f.end)+1);
+  const off = +f.off||0;
+  const sd = studyDaysIn(n,off);
+  const user = parseFloat(f.hours) > 0 ? parseFloat(f.hours) : null;
+  const cap = Math.min(user ?? 8, 8);
+  const needed = sd ? lvl.hours/sd : Infinity;
+  const feasible = sd>0 && needed <= cap + 1e-9;
+  const budget = cap*sd;
+  let reachable = null;
+  for (const l of LEVELS) if (l.hours <= budget + 1e-9) reachable = l;
+  const pace = user ? Math.min(user,8) : 3;
+  const daysNeeded = calDaysFor(Math.ceil(lvl.hours/pace - 1e-9), off);
+  return {lvl, n, off, sd, user, cap, needed, feasible, budget, reachable, pace, daysNeeded};
+}
+
+function goalsFor(levelKey){
+  const max = LV[levelKey].i;
+  return GOALS.map((g,gi)=>({gi,h:g.h})).filter(x => LV[GOALS[x.gi].lv].i <= max);
+}
+
+function distribute(queue, dates, off, hpd, startIdx, plan){
+  // queue: [{gi,h}] in order; fills study days from dates[] at hpd each
+  const out = [];
+  const studyIdx = [];
+  dates.forEach((date,k)=>{
+    const i = startIdx + k;
+    if (isOff(i,off)) { out.push({date, off:true, pieces:[]}); return; }
+    let cap = hpd; const pieces = [];
+    while (queue.length && cap > 1e-6){
+      const g = queue[0]; const take = Math.min(g.h, cap);
+      pieces.push({id:'p'+(plan.nextId++), gi:g.gi, h:take});
+      g.h -= take; cap -= take;
+      if (g.h <= 1e-6) queue.shift();
+    }
+    studyIdx.push(out.length);
+    out.push({date, off:false, pieces});
+  });
+  // floating-point leftovers go on the last study day
+  if (queue.length && studyIdx.length){
+    const last = out[studyIdx[studyIdx.length-1]];
+    queue.forEach(g => { if (g.h>1e-6) last.pieces.push({id:'p'+(plan.nextId++), gi:g.gi, h:g.h}); });
+  }
+  return out;
+}
+
+function createPlan(f){
+  const a = assess(f);
+  const start = f.mode==='days' ? today() : f.start;
+  const dates = Array.from({length:a.n},(_,i)=>addDays(start,i));
+  const plan = {level:f.level, start, n:a.n, off:a.off, hpd:a.needed, nextId:1, created:today()};
+  plan.days = distribute(goalsFor(f.level), dates, a.off, a.needed, 0, plan);
+  state = {plan, checks:{}};
+  openWeeks = new Set();
+  save(); render();
+  window.scrollTo(0,0);
+}
+
+function missedDays(){
+  const t = today(), {plan,checks} = state;
+  return plan.days.filter(d => !d.off && d.date < t && d.pieces.some(p=>!checks[p.id]));
+}
+
+function respread(){
+  const {plan,checks} = state, t = today();
+  let startIdx = plan.days.findIndex(d => d.date >= t);
+  if (startIdx < 0) { alert('Your plan\'s end date has passed. Extend it by a week first, or start a new plan.'); return; }
+  const remaining = new Map(), doneAhead = [];
+  plan.days.forEach((d,i)=>{
+    const keep = [];
+    d.pieces.forEach(p=>{
+      if (checks[p.id]) { if (i>=startIdx) doneAhead.push(p); else keep.push(p); }
+      else remaining.set(p.gi, (remaining.get(p.gi)||0) + p.h);
+    });
+    if (i<startIdx) d.pieces = keep;
+  });
+  const queue = [...remaining.entries()].sort((a,b)=>a[0]-b[0]).map(([gi,h])=>({gi,h}));
+  const total = queue.reduce((s,g)=>s+g.h,0);
+  const dates = plan.days.slice(startIdx).map(d=>d.date);
+  const sdLeft = dates.filter((_,k)=>!isOff(startIdx+k,plan.off)).length;
+  if (!sdLeft) { alert('No study days left in your plan. Extend it by a week first.'); return; }
+  const hpd = total/sdLeft;
+  const fresh = distribute(queue, dates, plan.off, hpd, startIdx, plan);
+  const firstStudy = fresh.find(d=>!d.off);
+  if (firstStudy) firstStudy.pieces = [...doneAhead, ...firstStudy.pieces];
+  plan.days = [...plan.days.slice(0,startIdx), ...fresh];
+  plan.hpd = hpd;
+  save(); render();
+  if (hpd > 8) alert(`Heads up: to finish on time you now need ${fmtNum(hpd)} hrs/day. That's more than is realistic — consider extending your plan.`);
+}
+
+function extendWeek(){
+  const {plan} = state;
+  const lastDate = plan.days[plan.days.length-1].date;
+  for (let k=1;k<=7;k++) plan.days.push({date:addDays(lastDate,k), off:isOff(plan.n+k-1,plan.off), pieces:[]});
+  plan.n += 7;
+  save(); respread();
+}
+
+/* ---------- Rendering: setup ---------- */
+function renderSetup(){
+  const lv = LEVELS.map(l=>`
+    <label class="lvl"><input type="radio" name="level" value="${l.key}" ${form.level===l.key?'checked':''}>
+      <span><b>${l.name} <span class="tag">${l.cefr} · ~${l.hours} hrs</span></b><span class="muted small">${l.blurb}</span></span>
+    </label>`).join('');
+  $('#app').innerHTML = `
+    <header class="top"><div>
+      <div class="eyebrow">Brazilian Portuguese · from zero</div>
+      <h1>Rumo ao Português</h1>
+      <p class="muted">Pick a level and a deadline. You'll get the hours you need and a day-by-day plan to get there.</p>
+    </div></header>
+    <div class="card">
+      <h2>Your goal</h2>
+      <div class="levels" id="levels">${lv}</div>
+
+      <label>Your deadline</label>
+      <div class="seg" role="group" aria-label="Deadline type">
+        <button type="button" data-mode="days" aria-pressed="${form.mode==='days'}">Number of days</button>
+        <button type="button" data-mode="dates" aria-pressed="${form.mode==='dates'}">Start & end date</button>
+      </div>
+      ${form.mode==='days'
+        ? `<input id="f-days" type="number" min="1" max="1000" inputmode="numeric" value="${form.days}" aria-label="Number of days">
+           <p class="muted small" style="margin-top:6px">Starts today. 48 hours = 2 days.</p>`
+        : `<div class="row2"><div><label for="f-start" class="small">Start</label><input id="f-start" type="date" value="${form.start}"></div>
+           <div><label for="f-end" class="small">End</label><input id="f-end" type="date" value="${form.end}"></div></div>`}
+
+      <div class="row2">
+        <div><label for="f-hours">Hours per day <span class="muted">(optional)</span></label>
+          <input id="f-hours" type="number" min="0.5" max="16" step="0.5" inputmode="decimal" placeholder="Tell me" value="${form.hours}"></div>
+        <div><label for="f-off">Days off per week</label>
+          <select id="f-off">${[0,1,2,3].map(n=>`<option value="${n}" ${+form.off===n?'selected':''}>${n}</option>`).join('')}</select></div>
+      </div>
+      <div id="verdict"></div>
+    </div>`;
+  bindSetup(); renderVerdict();
+}
+
+function renderVerdict(){
+  const a = assess(form);
+  let html = '';
+  if (!a.n) { $('#verdict').innerHTML = `<div class="verdict warn"><p>Enter how many days you have.</p></div>`; return; }
+  const stats = `<div class="stats">
+      <div class="stat"><b>${a.lvl.hours}</b><span>hours needed</span></div>
+      <div class="stat"><b>${a.sd}</b><span>study days</span></div>
+      <div class="stat"><b>${a.sd?fmtNum(a.needed):'—'}</b><span>hrs / study day</span></div></div>`;
+  if (a.feasible){
+    const intense = a.needed > 4;
+    const extra = a.user && a.user > a.needed + 0.05 ? `<p class="small">You said ${fmtNum(a.user)} hrs/day — you only need ${fmtNum(a.needed)}. Your plan uses that.</p>` : '';
+    html = `<div class="verdict ${intense?'warn':'ok'}">
+      <h3>${intense?'Doable, but very intensive':'Doable'}</h3>
+      <p class="small">${intense
+        ? `More than 4 hours a day is hard to keep up and your memory needs breaks. Split it into 45–60 minute sessions with real rest between them.`
+        : `A steady, realistic pace. Consistency beats cramming.`}</p>
+      ${stats}${extra}
+      <button class="btn full" id="go">Build my plan</button></div>`;
+  } else {
+    const pct = Math.floor(a.budget / LEVELS[0].hours * 100);
+    const reach = a.reachable
+      ? `<p><b>Fix 1 — keep your deadline:</b> the highest level you can reach is <b>${a.reachable.name} (${a.reachable.cefr})</b>.</p>
+         <button class="btn small" data-level="${a.reachable.key}">Plan for ${a.reachable.name}</button>`
+      : `<p><b>Fix 1 — keep your deadline:</b> at most ${fmtNum(a.budget)} hrs fits in that time — about ${pct}% of Survival basics. A 2-day sprint at 7.5 hrs/day is enough for Survival basics.</p>`;
+    const why = !a.sd ? 'There are no study days in that range.'
+      : a.user && a.needed <= 8 ? `At ${fmtNum(a.user)} hrs/day you'd only fit ${fmtNum(a.budget)} of the ${a.lvl.hours} hours you need.`
+      : `You'd need ${fmtNum(a.needed)} hrs every study day. More than 8 hours a day isn't realistic, because your brain stops holding onto new words.`;
+    html = `<div class="verdict bad">
+      <h3>Not realistic in that time</h3>
+      <p class="small">${why}</p>${stats}
+      <div class="fixes">
+        <div class="fix">${reach}</div>
+        <div class="fix"><p><b>Fix 2 — keep your level:</b> at ${fmtNum(a.pace)} hrs/day you'd need <b>${a.daysNeeded} days</b>.</p>
+          <button class="btn small ghost" id="use-days" data-days="${a.daysNeeded}">Use ${a.daysNeeded} days</button></div>
+      </div></div>`;
+  }
+  $('#verdict').innerHTML = html;
+  $('#go')?.addEventListener('click',()=>createPlan(form));
+  document.querySelectorAll('[data-level]').forEach(b=>b.addEventListener('click',()=>{ form.level=b.dataset.level; renderSetup(); }));
+  $('#use-days')?.addEventListener('click',e=>{
+    const n = +e.target.dataset.days;
+    if (form.mode==='days') form.days = n; else form.end = addDays(form.start, n-1);
+    if (!form.hours) {} else if (+form.hours > 8) form.hours = '';
+    renderSetup();
+  });
+}
+
+function bindSetup(){
+  document.querySelectorAll('input[name=level]').forEach(r=>r.addEventListener('change',()=>{ form.level=r.value; renderVerdict(); }));
+  document.querySelectorAll('[data-mode]').forEach(b=>b.addEventListener('click',()=>{ form.mode=b.dataset.mode; renderSetup(); }));
+  const on = (id,key) => $(id)?.addEventListener('input',e=>{ form[key]=e.target.value; renderVerdict(); });
+  on('#f-days','days'); on('#f-start','start'); on('#f-end','end'); on('#f-hours','hours');
+  $('#f-off').addEventListener('change',e=>{ form.off=+e.target.value; renderVerdict(); });
+}
+
+/* ---------- Rendering: plan ---------- */
+function partInfo(plan){
+  const seen = {}, totals = {};
+  plan.days.forEach(d=>d.pieces.forEach(p=>{ totals[p.gi]=(totals[p.gi]||0)+1; }));
+  const part = {};
+  plan.days.forEach(d=>d.pieces.forEach(p=>{ seen[p.gi]=(seen[p.gi]||0)+1; part[p.id]=[seen[p.gi],totals[p.gi]]; }));
+  return part;
+}
+
+function dayMeta(plan){
+  // review days, milestones, study-day numbering
+  const meta = []; let studyN = 0, lastCheck = null;
+  const short = plan.n <= 14;
+  const lastStudy = plan.days.map((d,i)=>d.off?-1:i).filter(i=>i>=0).pop();
+  plan.days.forEach((d,i)=>{
+    const m = {};
+    if (!d.off){ studyN++; m.studyN = studyN; m.review = studyN%4===0 || i===lastStudy; }
+    d.pieces.forEach(p=>{ if (GOALS[p.gi].check) lastCheck = GOALS[p.gi].check; });
+    if (i===lastStudy) { m.milestone = LV[plan.level].final; m.final = true; }
+    else if (!d.off && (short ? studyN%3===0 : lastStudyOfWeek(plan,i))) m.milestone = lastCheck || 'Say out loud, without notes, 10 things you can now say in Portuguese.';
+    meta.push(m);
+  });
+  return meta;
+}
+
+function lastStudyOfWeek(plan,i){
+  const wEnd = Math.min(i - i%7 + 6, plan.days.length-1);
+  for (let j=i+1; j<=wEnd; j++) if (!plan.days[j].off) return false;
+  return true;
+}
+
+function blocksFor(day, m){
+  if (day.off || !day.pieces.length) return null;
+  const lvKey = GOALS[day.pieces[0].gi].lv;
+  let s = [...SPLITS[lvKey]];
+  if (m.review){ const scale = 75/(100-s[4]); s = s.slice(0,4).map(x=>x*scale); s.push(25); }
+  const hrs = day.pieces.reduce((a,p)=>a+p.h,0);
+  const out = s.map((pct,k)=>({name:BLOCKS[k][0], c:BLOCKS[k][1], pct, h:Math.round(hrs*pct/100*12)/12}));
+  out[4].h = Math.round(hrs*12)/12 - out.slice(0,4).reduce((a,b)=>a+b.h,0); // review absorbs rounding so blocks add up
+  return out;
+}
+
+function dayHTML(d, i, m, parts, isToday){
+  const {checks} = state; const t = today();
+  if (d.off) return `<div class="day off"><div class="day-h"><b>${niceDate(d.date)}</b><span>Rest day</span></div>
+    <p class="small" style="margin:4px 0 0">Optional: 10 minutes of flashcards or a Brazilian song.</p></div>`;
+  const hrs = d.pieces.reduce((a,p)=>a+p.h,0);
+  const allDone = d.pieces.length && d.pieces.every(p=>checks[p.id]);
+  const missed = !allDone && d.date < t;
+  const bl = blocksFor(d,m);
+  const goals = d.pieces.map(p=>{
+    const g = GOALS[p.gi], [pn,pt] = parts[p.id];
+    return `<li class="goal ${checks[p.id]?'done':''}">
+      <input type="checkbox" data-id="${p.id}" id="c-${p.id}${isToday?'-t':''}" ${checks[p.id]?'checked':''}>
+      <div><label for="c-${p.id}${isToday?'-t':''}" style="margin:0;font-weight:400">
+        <span class="g-t">${g.t}</span>${pt>1?`<span class="pill">part ${pn} of ${pt}</span>`:''}<span class="pill">${fmtH(p.h)}</span>
+        <div class="g-d">${g.d}</div></label>${LESSONS[g.t]?`<button class="lesson-btn" data-lesson-title="${g.t}">Open lesson ▸</button>`:''}</div></li>`;
+  }).join('');
+  return `<div class="day ${isToday&&!m.inCard?'today':''}">
+    <div class="day-h"><b>Day ${i+1} · ${niceDate(d.date)}</b>
+      <span>${fmtH(hrs)}${m.review?'<span class="pill rev">review day</span>':''}${allDone?'<span class="pill ok">done</span>':missed?'<span class="pill miss">missed</span>':''}</span></div>
+    ${bl?`<div class="blocks">${bl.map(b=>`<i style="width:${b.pct}%;background:var(${b.c})"></i>`).join('')}</div>
+    <div class="legend">${bl.map(b=>`<span style="--c:var(${b.c})">${b.name} ${fmtH(b.h)}</span>`).join('')}</div>
+    ${m.inCard?`<ul class="how">${bl.map(b=>`<li><b style="color:var(${b.c})">${b.name}:</b> ${BLOCK_HOW[b.name]}</li>`).join('')}</ul>`:''}`:''}
+    <ul class="goals">${goals}</ul>
+    ${m.milestone?`<div class="milestone"><b>${m.final?'Final check':'Milestone check'}:</b> ${m.milestone}</div>`:''}
+  </div>`;
+}
+
+function renderPlan(){
+  const {plan,checks} = state; const lvl = LV[plan.level]; const t = today();
+  const parts = partInfo(plan), meta = dayMeta(plan);
+  const all = plan.days.flatMap(d=>d.pieces);
+  const totalH = all.reduce((a,p)=>a+p.h,0), doneH = all.filter(p=>checks[p.id]).reduce((a,p)=>a+p.h,0);
+  const goalIds = [...new Set(all.map(p=>p.gi))];
+  const goalsDone = goalIds.filter(gi=>all.filter(p=>p.gi===gi).every(p=>checks[p.id])).length;
+  const missed = missedDays();
+  const end = plan.days[plan.days.length-1].date;
+  const ti = plan.days.findIndex(d=>d.date===t);
+  const phrase = PHRASES[Math.floor(parse(t)/864e5) % PHRASES.length];
+
+  let todayCard = '';
+  if (ti >= 0) todayCard = `<div class="card"><div class="eyebrow">Today</div>${dayHTML(plan.days[ti], ti, {...meta[ti], inCard:true}, parts, true)}
+    <div class="quick"><button class="btn small" data-go="flash">Flashcards${dueList().length?` (${dueList().length} due)`:''}</button><button class="btn small ghost" data-go="quiz">Listening quiz</button><button class="btn small ghost" data-tab="practice">Conversations</button></div></div>`;
+  else if (t < plan.start) todayCard = `<div class="card"><div class="eyebrow">Coming up</div><p style="margin-top:6px">Your plan starts ${niceDate(plan.start)}.</p></div>`;
+  else if (t > end) todayCard = `<div class="card"><div class="eyebrow">Plan finished</div><p style="margin-top:6px">Your end date has passed. ${doneH>=totalH-1e-6?'Parabéns — you did it! 🎉':'You can extend it by a week and re-spread what\'s left.'}</p>
+    ${doneH<totalH-1e-6?'<button class="btn small" id="extend">Extend by 7 days</button>':''}</div>`;
+
+  const weeks = [];
+  for (let w=0; w*7<plan.days.length; w++) weeks.push(plan.days.slice(w*7,w*7+7).map((d,k)=>[d,w*7+k]));
+  const curW = ti>=0 ? Math.floor(ti/7) : 0;
+  if (!openWeeks.size) openWeeks.add(curW);
+  const weekHTML = weeks.map((days,w)=>{
+    const wh = days.reduce((a,[d])=>a+d.pieces.reduce((s,p)=>s+p.h,0),0);
+    const wd = days.reduce((a,[d])=>a+d.pieces.filter(p=>checks[p.id]).reduce((s,p)=>s+p.h,0),0);
+    const label = weeks.length===1 ? 'Your schedule' : `Week ${w+1}`;
+    return `<details class="week" data-w="${w}" ${openWeeks.has(w)?'open':''}><summary><span>${label} <span class="muted small" style="font-weight:400">${niceDate(days[0][0].date)} – ${niceDate(days[days.length-1][0].date)}</span></span>
+      <span class="muted small">${fmtH(wd)} / ${fmtH(wh)}</span></summary>
+      ${days.map(([d,i])=>dayHTML(d,i,meta[i],parts,i===ti)).join('')}</details>`;
+  }).join('');
+
+  $('#app').innerHTML = `
+    <header class="top"><div>
+      <div class="eyebrow">Rumo ao Português</div>
+      <h1>${lvl.name} <span class="muted" style="font-size:.6em">${lvl.cefr}</span></h1>
+      <p class="muted">${niceDate(plan.start)} → ${niceDate(end)} · ${plan.days.length} days · about ${fmtNum(plan.hpd)} hrs per study day</p>
+    </div></header>
+    <div class="tabs" role="tablist"><button role="tab" data-tab="plan" aria-selected="${tab==='plan'}">Plan</button><button role="tab" data-tab="practice" aria-selected="${tab==='practice'}">Practice${dueList().length?` · ${dueList().length} due`:''}</button></div>
+    ${tab==='practice' ? practiceHTML() : `
+
+    <div class="card">
+      <div class="prog">
+        <div><div class="lbl"><span>Hours studied</span><b>${fmtNum(doneH)} / ${fmtNum(totalH)} hrs</b></div><div class="bar"><i style="width:${totalH?doneH/totalH*100:0}%"></i></div></div>
+        <div><div class="lbl"><span>Goals completed</span><b>${goalsDone} / ${goalIds.length}</b></div><div class="bar sun"><i style="width:${goalIds.length?goalsDone/goalIds.length*100:0}%"></i></div></div>
+      </div>
+    </div>
+
+    ${missed.length && t <= end ? `<div class="banner"><span><b>${missed.length} missed day${missed.length>1?'s':''}.</b> Spread the unfinished goals over the days you have left?</span>
+      <button class="btn small" id="respread">Re-spread</button></div>` : ''}
+
+    <div class="card phrase"><div class="eyebrow">Phrase of the day</div>
+      <div class="pt" lang="pt-BR">${phrase[0]}</div><div class="muted">${phrase[1]}</div></div>
+
+    ${todayCard}
+
+    <details class="week method" ${all.some(p=>checks[p.id])?'':'open'}><summary><span>The method: what works fastest</span></summary>
+      <ol class="method-list">${METHOD.map(([h,b])=>`<li><b>${h}.</b> <span class="muted">${b}</span></li>`).join('')}</ol>
+    </details>
+
+    <h2 style="margin-top:28px">Full plan</h2>
+    ${weekHTML}
+
+    <div class="card"><h2>Free resources</h2><div class="res">
+      ${RESOURCES.map(([k,items])=>`<div><h3>${k}</h3><ul>${items.map(x=>`<li>${x}</li>`).join('')}</ul></div>`).join('')}
+    </div><p class="muted small" style="margin-top:12px">Some have optional paid tiers. The free versions are enough.</p></div>
+
+    <div class="footer-actions">
+      <button class="btn ghost small" id="extend2">Extend by 7 days</button>
+      <button class="btn ghost small" id="reset">Start a new plan</button>
+    </div>`}`;
+
+  const app = $('#app');
+  bindPractice(app);
+  app.querySelectorAll('[data-tab]').forEach(b=>b.addEventListener('click',()=>{ tab=b.dataset.tab; render(); window.scrollTo(0,0); }));
+  document.querySelectorAll('input[data-id]').forEach(cb=>cb.addEventListener('change',()=>{
+    if (cb.checked){ state.checks[cb.dataset.id] = true; const pc = state.plan.days.flatMap(d=>d.pieces).find(p=>p.id===cb.dataset.id); if (pc) addGoalCards(GOALS[pc.gi].t); }
+    else delete state.checks[cb.dataset.id];
+    save(); const y = window.scrollY; render(); window.scrollTo(0,y);
+  }));
+  document.querySelectorAll('details.week[data-w]').forEach(el=>el.addEventListener('toggle',()=>{
+    const w = +el.dataset.w; el.open ? openWeeks.add(w) : openWeeks.delete(w);
+  }));
+  $('#respread')?.addEventListener('click',respread);
+  $('#extend')?.addEventListener('click',extendWeek);
+  $('#extend2')?.addEventListener('click',extendWeek);
+  $('#reset')?.addEventListener('click',()=>{
+    if (!confirm('Start over? This deletes your current plan and progress.')) return;
+    state = null; try{ localStorage.removeItem(STORE); }catch(e){}
+    render();
+  });
+}
+
+function render(){ state && state.plan ? renderPlan() : renderSetup(); }
+render();
+
+// Installable/offline app: register the service worker and ask the browser to keep saved progress
+if ('serviceWorker' in navigator && location.protocol === 'https:') navigator.serviceWorker.register('sw.js').catch(()=>{});
+try { navigator.storage?.persist?.(); } catch(e){}
+</script>
+</body>
+</html>
